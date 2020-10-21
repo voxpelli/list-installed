@@ -16,11 +16,19 @@ const {
   listInstalled,
 } = require('..');
 
-describe('listInstalled()', () => {
+describe('listInstalled()', function () {
+  this.timeout(5000);
+
   it('should throw on invalid input', async () => {
     // @ts-ignore
     await listInstalled()
       .should.be.rejectedWith(TypeError, 'Expected a string input to listInstalled()');
+  });
+
+  it('should throw on non-existing path', async () => {
+    // @ts-ignore
+    await listInstalled(pathModule.join(__dirname, 'non-existing-path'))
+      .should.be.rejectedWith(Error, /^Non-existing path set: /);
   });
 
   it('should return a promise', async () => {

@@ -16,7 +16,9 @@ const {
   listInstalledGenerator,
 } = require('..');
 
-describe('listInstalledGenerator()', () => {
+describe('listInstalledGenerator()', function () {
+  this.timeout(5000);
+
   it('should throw on invalid input', async () => {
     await (async () => {
       // @ts-ignore
@@ -24,6 +26,15 @@ describe('listInstalledGenerator()', () => {
       for await (const _foo of listInstalledGenerator()) {}
     })()
       .should.be.rejectedWith(TypeError, 'Expected a string input to listInstalledGenerator()');
+  });
+
+  it('should throw on non-existing path', async () => {
+    await (async () => {
+      // @ts-ignore
+      // eslint-disable-next-line no-unused-vars
+      for await (const _foo of listInstalledGenerator(pathModule.join(__dirname, 'non-existing-path'))) {}
+    })()
+      .should.be.rejectedWith(Error, /^Non-existing path set: /);
   });
 
   it('should return an async iterator', async () => {
