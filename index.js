@@ -105,7 +105,7 @@ const listInstalledGenerator = async function * (cwd) {
     }
   } catch (err) {
     if (err.code === 'ENOENT' && err.path === nodeModulesDir) {
-      throw new Error('Invalid path set to listInstalledGenerator: ' + nodeModulesDir);
+      throw new Error('Non-existing path set: ' + nodeModulesDir);
     } else {
       throw err;
     }
@@ -119,14 +119,36 @@ const listInstalledGenerator = async function * (cwd) {
 const listInstalled = async (cwd) => {
   if (typeof cwd !== 'string') throw new TypeError('Expected a string input to listInstalled()');
 
-  /** @type {Map<string, import('type-fest').PackageJson>} */
-  const pkgs = new Map();
+  const nodeModulesDir = pathModule.resolve(cwd, 'node_modules');
 
-  for await (const pkg of listInstalledGenerator(cwd)) {
-    if (pkg.name) pkgs.set(pkg.name, pkg);
+  /**
+   * Rather than using listInstalledGenerator() to sequentially get the data, we add all of the package reads here and does a Promise.all() later
+   *
+   * @type {Promise<import('type-fest').PackageJson>[]}
+   */
+  const pkgs = [];
+
+  try {
+    const dir = await opendir(nodeModulesDir);
+    for await (const relativeModulePath of readdirModuleTree(dir)) {
+      pkgs.push(readPkg({ cwd: pathModule.join(nodeModulesDir, relativeModulePath) }));
+    }
+  } catch (err) {
+    if (err.code === 'ENOENT' && err.path === nodeModulesDir) {
+      throw new Error('Non-existing path set: ' + nodeModulesDir);
+    } else {
+      throw err;
+    }
   }
 
-  return pkgs;
+  /** @type {Map<string, import('type-fest').PackageJson>} */
+  const pkgMap = new Map();
+
+  for (const pkg of await Promise.all(pkgs)) {
+    if (pkg.name) pkgMap.set(pkg.name, pkg);
+  }
+
+  return pkgMap;
 };
 
 module.exports = {
