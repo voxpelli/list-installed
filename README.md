@@ -33,9 +33,9 @@ listInstalled(__dirname).then(pkgMap => {
 
 Similar functionality to `readdir()` from [`readdir-scoped-modules`](https://www.npmjs.com/package/readdir-scoped-modules).
 
-Returns all directories in `path`, with all scoped directories (like `@foo`) being expanded and joined with the directories directly within them (like eg. `@foo/abc` and `@foo/bar` if `abc` and `bar` are the two directories in `@foo`, though would never return `@foo/@xyz` or `@foo/.bin`).
+Returns all directories in `path`, with the scoped directories (like `@foo`) expanded and joined with the directories directly beneath them (like eg. `@foo/abc` and `@foo/bar` if `abc` and `bar` are the two directories in `@foo`, though it will never expand to `@`- or `.`-prefixed subdirectories and will hence never return `@foo/@xyz` or `@foo/.bin`).
 
-Will not return any folder name that begins with `.`.
+Will not return any directory with a name that begins with `.`.
 
 ### `readdirModuleTree(path, depth=0)`
 
