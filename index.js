@@ -9,6 +9,7 @@ const pathModule = require('path');
 const readPkg = require('read-pkg');
 
 /**
+ * @private
  * @param {string|import('fs').Dir} cwd
  * @param {boolean} [skipScoped]
  * @param {string} [prefix]
@@ -45,6 +46,7 @@ const readdirScoped = async function * (cwd) {
 };
 
 /**
+ * @private
  * @param {import('fs').Dir} cwd
  * @param {number} [depth]
  * @param {string} [prefix]
@@ -90,13 +92,15 @@ const readdirModuleTree = async function * (cwd, depth = 0) {
 };
 
 /**
- * @param {string} cwd
+ * Creates a generator for a list of top level installed modules of a project and their package.json files
+ *
+ * @param {string} path
  * @returns {AsyncGenerator<import('type-fest').PackageJson>}
  */
-const listInstalledGenerator = async function * (cwd) {
-  if (typeof cwd !== 'string') throw new TypeError('Expected a string input to listInstalledGenerator()');
+const listInstalledGenerator = async function * (path) {
+  if (typeof path !== 'string') throw new TypeError('Expected a string input to listInstalledGenerator()');
 
-  const nodeModulesDir = pathModule.resolve(cwd, 'node_modules');
+  const nodeModulesDir = pathModule.resolve(path, 'node_modules');
 
   try {
     const dir = await opendir(nodeModulesDir);
@@ -113,13 +117,15 @@ const listInstalledGenerator = async function * (cwd) {
 };
 
 /**
- * @param {string} cwd
+ * Creates a generator for a list of top level installed modules of a project and their package.json files
+ *
+ * @param {string} path The path to the module, either absolute or relative to current working directory
  * @returns {Promise<Map<string, import('type-fest').PackageJson>>}
  */
-const listInstalled = async (cwd) => {
-  if (typeof cwd !== 'string') throw new TypeError('Expected a string input to listInstalled()');
+const listInstalled = async (path) => {
+  if (typeof path !== 'string') throw new TypeError('Expected a string input to listInstalled()');
 
-  const nodeModulesDir = pathModule.resolve(cwd, 'node_modules');
+  const nodeModulesDir = pathModule.resolve(path, 'node_modules');
 
   /**
    * Rather than using listInstalledGenerator() to sequentially get the data, we add all of the package reads here and does a Promise.all() later
