@@ -9,6 +9,12 @@ const pathModule = require('path');
 const readPkg = require('read-pkg');
 
 /**
+ * @param {string} moduleName
+ * @returns {string}
+ */
+const platformIndependentRepresentation = (moduleName) => moduleName.replace(pathModule.sep, '/');
+
+/**
  * @private
  * @param {string|import('fs').Dir} path
  * @param {boolean} [skipScoped]
@@ -30,9 +36,9 @@ const _internalReaddirScoped = async function * (path, skipScoped, prefix) {
     const moduleName = (prefix || '') + file.name;
 
     if (file.name.startsWith('@')) {
-      if (!skipScoped) yield * _internalReaddirScoped(pathModule.join(dir.path, file.name), false, moduleName + '/');
+      if (!skipScoped) yield * _internalReaddirScoped(pathModule.join(dir.path, file.name), false, moduleName + pathModule.sep);
     } else if (!file.name.startsWith('.')) {
-      yield moduleName;
+      yield platformIndependentRepresentation(moduleName);
     }
   }
 };
@@ -60,7 +66,7 @@ const readdirScoped = async function * (path) {
  */
 const _internalReaddirModuleTree = async function * (inputDir, depth = 0, prefix) {
   for await (const modulePath of _internalReaddirScoped(inputDir, false, prefix)) {
-    yield modulePath;
+    yield platformIndependentRepresentation(modulePath);
 
     if (depth < 1) continue;
 
@@ -69,7 +75,7 @@ const _internalReaddirModuleTree = async function * (inputDir, depth = 0, prefix
 
     try {
       const dir = await opendir(subModulePath);
-      yield * _internalReaddirModuleTree(dir, depth - 1, subModule + '/');
+      yield * _internalReaddirModuleTree(dir, depth - 1, subModule + pathModule.sep);
     } catch (err) {
       if (err.code === 'ENOENT' && err.path === subModulePath) {
         // Fail silently
@@ -115,7 +121,8 @@ const listInstalledGenerator = async function * (path) {
   try {
     const dir = await opendir(nodeModulesDir);
     for await (const relativeModulePath of readdirModuleTree(dir)) {
-      yield readPkg({ cwd: pathModule.join(nodeModulesDir, relativeModulePath) });
+      const cwd = pathModule.join(nodeModulesDir, relativeModulePath.replace('/', pathModule.sep));
+      yield readPkg({ cwd });
     }
   } catch (err) {
     throw err.code === 'ENOENT' && err.path === nodeModulesDir
