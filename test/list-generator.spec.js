@@ -22,7 +22,7 @@ describe('listInstalledGenerator()', function () {
   it('should throw on invalid input', async () => {
     await (async () => {
       // @ts-ignore
-      // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars, no-empty
       for await (const _foo of listInstalledGenerator()) {}
     })()
       .should.be.rejectedWith(TypeError, 'Expected a string input to listInstalledGenerator()');
@@ -31,7 +31,7 @@ describe('listInstalledGenerator()', function () {
   it('should throw on non-existing path', async () => {
     await (async () => {
       // @ts-ignore
-      // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars, no-empty
       for await (const _foo of listInstalledGenerator(pathModule.join(__dirname, 'non-existing-path'))) {}
     })()
       .should.be.rejectedWith(Error, /^Non-existing path set: /);

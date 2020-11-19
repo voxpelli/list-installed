@@ -118,11 +118,9 @@ const listInstalledGenerator = async function * (path) {
       yield readPkg({ cwd: pathModule.join(nodeModulesDir, relativeModulePath) });
     }
   } catch (err) {
-    if (err.code === 'ENOENT' && err.path === nodeModulesDir) {
-      throw new Error('Non-existing path set: ' + nodeModulesDir);
-    } else {
-      throw err;
-    }
+    throw err.code === 'ENOENT' && err.path === nodeModulesDir
+      ? new Error('Non-existing path set: ' + nodeModulesDir)
+      : err;
   }
 };
 
@@ -150,11 +148,9 @@ const listInstalled = async (path) => {
       pkgs.push(readPkg({ cwd: pathModule.join(nodeModulesDir, relativeModulePath) }));
     }
   } catch (err) {
-    if (err.code === 'ENOENT' && err.path === nodeModulesDir) {
-      throw new Error('Non-existing path set: ' + nodeModulesDir);
-    } else {
-      throw err;
-    }
+    throw err.code === 'ENOENT' && err.path === nodeModulesDir
+      ? new Error('Non-existing path set: ' + nodeModulesDir)
+      : err;
   }
 
   /** @type {Map<string, import('type-fest').PackageJson>} */

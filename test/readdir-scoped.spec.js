@@ -20,7 +20,7 @@ describe('readdirScoped()', () => {
   it('should throw on invalid input', async () => {
     await (async () => {
       // @ts-ignore
-      // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars, no-empty
       for await (const _foo of readdirScoped()) {}
     })()
       .should.be.rejectedWith(TypeError, 'Invalid input to readdirScoped()');
