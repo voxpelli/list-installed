@@ -38,7 +38,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.14",
     "@types/chai-as-promised": "^7.1.3",
-    "@types/mocha": "^8.0.4",
+    "@types/mocha": "^8.2.0",
     "@types/node": "^12.19.8",
     "@voxpelli/eslint-config": "9.0.0",
     "@voxpelli/eslint-config-jsdoc-ts": "^0.3.1",
