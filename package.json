@@ -14,7 +14,7 @@
     "build:1-declaration": "tsc -p declaration.tsconfig.json",
     "build": "run-s build:*",
     "check:dependency-check": "dependency-check *.js 'test/**/*.js' --no-dev -i type-fest",
-    "check:installed-check": "installed-check -i eslint",
+    "check:installed-check": "installed-check",
     "check:lint": "eslint .",
     "check:tsc": "tsc",
     "check": "run-s clean && run-p check:*",
@@ -59,8 +59,8 @@
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-unicorn": "^28.0.0",
     "ghat": "^0.14.0",
-    "installed-check": "^3.0.0",
-    "mocha": "^8.2.1",
+    "installed-check": "^4.0.0",
+    "mocha": "^8.3.0",
     "npm-run-all": "^4.1.5",
     "typescript": "^4.1.3"
   }
