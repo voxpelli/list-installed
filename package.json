@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "read-pkg": "^5.2.0",
+    "string.prototype.replaceall": "^1.0.5",
     "type-fest": "^0.21.2"
   },
   "devDependencies": {

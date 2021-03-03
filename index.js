@@ -8,11 +8,17 @@ const pathModule = require('path');
 
 const readPkg = require('read-pkg');
 
+/** @type {(input: string, searchValue: string | RegExp, replaceValue: string | ((substring: string, ...args: any[]) => string)) => string} */
+// @ts-ignore
+const replaceAll = require('string.prototype.replaceall');
+
+const PLATFORM_INDEPENDENT_SEPARATOR = '/';
+
 /**
  * @param {string} moduleName
  * @returns {string}
  */
-const platformIndependentRepresentation = (moduleName) => moduleName.replace(pathModule.sep, '/');
+const platformIndependentRepresentation = (moduleName) => replaceAll(moduleName, pathModule.sep, PLATFORM_INDEPENDENT_SEPARATOR);
 
 /**
  * @private
@@ -121,7 +127,7 @@ const listInstalledGenerator = async function * (path) {
   try {
     const dir = await opendir(nodeModulesDir);
     for await (const relativeModulePath of readdirModuleTree(dir)) {
-      const cwd = pathModule.join(nodeModulesDir, relativeModulePath.replace('/', pathModule.sep));
+      const cwd = pathModule.join(nodeModulesDir, replaceAll(relativeModulePath, PLATFORM_INDEPENDENT_SEPARATOR, pathModule.sep));
       yield readPkg({ cwd });
     }
   } catch (err) {
