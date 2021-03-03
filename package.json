@@ -43,6 +43,7 @@
     "@types/node": "^12.19.16",
     "@voxpelli/eslint-config": "9.0.0",
     "@voxpelli/eslint-config-jsdoc-ts": "^0.3.1",
+    "@voxpelli/tsconfig": "^1.0.0",
     "c8": "^7.5.0",
     "chai": "^4.3.0",
     "chai-as-promised": "^7.1.1",
