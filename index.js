@@ -124,16 +124,22 @@ const listInstalledGenerator = async function * (path) {
 
   const nodeModulesDir = pathModule.resolve(path, 'node_modules');
 
-  try {
-    const dir = await opendir(nodeModulesDir);
-    for await (const relativeModulePath of readdirModuleTree(dir)) {
-      const cwd = pathModule.join(nodeModulesDir, replaceAll(relativeModulePath, PLATFORM_INDEPENDENT_SEPARATOR, pathModule.sep));
+  const dir = await opendir(nodeModulesDir).catch(err => {
+    throw (
+      err.code === 'ENOENT' && err.path === nodeModulesDir
+        ? new Error('Non-existing path set: ' + nodeModulesDir)
+        : err
+    );
+  });
+
+  for await (const relativeModulePath of readdirModuleTree(dir)) {
+    const cwd = pathModule.join(nodeModulesDir, replaceAll(relativeModulePath, PLATFORM_INDEPENDENT_SEPARATOR, pathModule.sep));
+
+    try {
       yield readPkg({ cwd });
+    } catch {
+      // If we fail to find or read a package.json – then just ignore that module path
     }
-  } catch (err) {
-    throw err.code === 'ENOENT' && err.path === nodeModulesDir
-      ? new Error('Non-existing path set: ' + nodeModulesDir)
-      : err;
   }
 };
 

@@ -59,4 +59,38 @@ describe('listInstalledGenerator()', function () {
       }
     }
   });
+
+  it('should ignore package.json less folders in node_modules', async () => {
+    const packages = [];
+
+    for await (const pkg of listInstalledGenerator(pathModule.join(__dirname, './fixtures/containing_non_package/'))) {
+      packages.push(pkg);
+    }
+
+    packages.should.deep.equal([
+      {
+        _id: 'bar@1.0.0',
+        name: 'bar',
+        readme: 'ERROR: No README data found!',
+        version: '1.0.0'
+      }
+    ]);
+  });
+
+  it('should ignore malformed package.json in node_modules', async () => {
+    const packages = [];
+
+    for await (const pkg of listInstalledGenerator(pathModule.join(__dirname, './fixtures/containing_malformed_package/'))) {
+      packages.push(pkg);
+    }
+
+    packages.should.deep.equal([
+      {
+        _id: 'bar@1.0.0',
+        name: 'bar',
+        readme: 'ERROR: No README data found!',
+        version: '1.0.0'
+      }
+    ]);
+  });
 });
