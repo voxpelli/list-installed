@@ -2,7 +2,8 @@
 
 A modern typed async alternative to [`read-installed`](https://www.npmjs.com/package/read-installed) and [`readdir-scoped-modules`](https://www.npmjs.com/package/readdir-scoped-modules). Used to list and return all modules installed in `node_modules`, either just their names or their `package.json` files.
 
-[![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat)](https://github.com/standard/semistandard)
+[![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg)](https://github.com/voxpelli/eslint-config)
+[![Types in JS](https://img.shields.io/badge/types_in_js-yes-brightgreen)](https://github.com/voxpelli/types-in-js)
 
 ## Usage
 
