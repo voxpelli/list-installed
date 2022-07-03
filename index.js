@@ -12,6 +12,13 @@ const readPkg = require('read-pkg');
 // @ts-ignore
 const replaceAll = require('string.prototype.replaceall');
 
+/**
+ * @param {any} value
+ * @returns {value is NodeJS.ErrnoException}
+ */
+// type-coverage:ignore-next-line
+const looksLikeAnErrnoException = (value) => value instanceof Error && Object.hasOwn(value, 'code');
+
 const PLATFORM_INDEPENDENT_SEPARATOR = '/';
 
 /**
@@ -83,7 +90,7 @@ const _internalReaddirModuleTree = async function * (inputDir, depth = 0, prefix
       const dir = await opendir(subModulePath);
       yield * _internalReaddirModuleTree(dir, depth - 1, subModule + pathModule.sep);
     } catch (err) {
-      if (err.code === 'ENOENT' && err.path === subModulePath) {
+      if (looksLikeAnErrnoException(err) && err.code === 'ENOENT' && err.path === subModulePath) {
         // Fail silently
       } else {
         throw err;
@@ -124,13 +131,17 @@ const listInstalledGenerator = async function * (path) {
 
   const nodeModulesDir = pathModule.resolve(path, 'node_modules');
 
-  const dir = await opendir(nodeModulesDir).catch(err => {
-    throw (
-      err.code === 'ENOENT' && err.path === nodeModulesDir
-        ? new Error('Non-existing path set: ' + nodeModulesDir)
-        : err
-    );
-  });
+  /** @type {import('node:fs').Dir} */
+  let dir;
+
+  try {
+    dir = await opendir(nodeModulesDir);
+  } catch (err) {
+    if (looksLikeAnErrnoException(err) && err.code === 'ENOENT' && err.path === nodeModulesDir) {
+      throw new Error('Non-existing path set: ' + nodeModulesDir);
+    }
+    throw err;
+  }
 
   for await (const relativeModulePath of readdirModuleTree(dir)) {
     const cwd = pathModule.join(nodeModulesDir, replaceAll(relativeModulePath, PLATFORM_INDEPENDENT_SEPARATOR, pathModule.sep));
@@ -167,9 +178,10 @@ const listInstalled = async (path) => {
       pkgs.push(readPkg({ cwd: pathModule.join(nodeModulesDir, relativeModulePath) }));
     }
   } catch (err) {
-    throw err.code === 'ENOENT' && err.path === nodeModulesDir
-      ? new Error('Non-existing path set: ' + nodeModulesDir)
-      : err;
+    if (looksLikeAnErrnoException(err) && err.code === 'ENOENT' && err.path === nodeModulesDir) {
+      throw new Error('Non-existing path set: ' + nodeModulesDir);
+    }
+    throw err;
   }
 
   /** @type {Map<string, import('type-fest').PackageJson>} */
