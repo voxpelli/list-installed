@@ -1,20 +1,13 @@
-/// <reference types="node" />
-/// <reference types="mocha" />
-/// <reference types="chai" />
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import { join } from 'desm';
 
-'use strict';
-
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-
-const pathModule = require('path');
+import {
+  listInstalledGenerator,
+} from '../index.js';
 
 chai.use(chaiAsPromised);
 const should = chai.should();
-
-const {
-  listInstalledGenerator,
-} = require('..');
 
 describe('listInstalledGenerator()', function () {
   this.timeout(5000);
@@ -32,7 +25,7 @@ describe('listInstalledGenerator()', function () {
     await (async () => {
       // @ts-ignore
       // eslint-disable-next-line no-unused-vars, no-empty
-      for await (const _foo of listInstalledGenerator(pathModule.join(__dirname, 'non-existing-path'))) {}
+      for await (const _foo of listInstalledGenerator(join(import.meta.url, 'non-existing-path'))) {}
     })()
       .should.be.rejectedWith(Error, /^Non-existing path set: /);
   });
@@ -45,7 +38,7 @@ describe('listInstalledGenerator()', function () {
   });
 
   it('should return sensible values', async () => {
-    for await (const pkg of listInstalledGenerator(pathModule.join(__dirname, '..'))) {
+    for await (const pkg of listInstalledGenerator(join(import.meta.url, '..'))) {
       should.exist(pkg);
 
       pkg.should.be.an('object').with.property('name').that.is.a('string');
@@ -63,7 +56,7 @@ describe('listInstalledGenerator()', function () {
   it('should ignore package.json less folders in node_modules', async () => {
     const packages = [];
 
-    for await (const pkg of listInstalledGenerator(pathModule.join(__dirname, './fixtures/containing_non_package/'))) {
+    for await (const pkg of listInstalledGenerator(join(import.meta.url, './fixtures/containing_non_package/'))) {
       packages.push(pkg);
     }
 
@@ -80,7 +73,7 @@ describe('listInstalledGenerator()', function () {
   it('should ignore malformed package.json in node_modules', async () => {
     const packages = [];
 
-    for await (const pkg of listInstalledGenerator(pathModule.join(__dirname, './fixtures/containing_malformed_package/'))) {
+    for await (const pkg of listInstalledGenerator(join(import.meta.url, './fixtures/containing_malformed_package/'))) {
       packages.push(pkg);
     }
 

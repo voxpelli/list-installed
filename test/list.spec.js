@@ -1,20 +1,13 @@
-/// <reference types="node" />
-/// <reference types="mocha" />
-/// <reference types="chai" />
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import { join } from 'desm';
 
-'use strict';
-
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-
-const pathModule = require('path');
+import {
+  listInstalled,
+} from '../index.js';
 
 chai.use(chaiAsPromised);
 const should = chai.should();
-
-const {
-  listInstalled,
-} = require('..');
 
 describe('listInstalled()', function () {
   this.timeout(5000);
@@ -27,18 +20,18 @@ describe('listInstalled()', function () {
 
   it('should throw on non-existing path', async () => {
     // @ts-ignore
-    await listInstalled(pathModule.join(__dirname, 'non-existing-path'))
+    await listInstalled(join(import.meta.url, 'non-existing-path'))
       .should.be.rejectedWith(Error, /^Non-existing path set: /);
   });
 
   it('should return a promise', async () => {
-    const result = listInstalled(pathModule.join(__dirname, '..'));
+    const result = listInstalled(join(import.meta.url, '..'));
     should.exist(result);
     result.should.be.an.instanceOf(Promise);
   });
 
   it('should resolve to sensible values', async () => {
-    const result = await listInstalled(pathModule.join(__dirname, '..'));
+    const result = await listInstalled(join(import.meta.url, '..'));
     should.exist(result);
     result.should.be.an.instanceOf(Map);
 

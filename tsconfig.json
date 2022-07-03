@@ -5,5 +5,9 @@
   ],
   "include": [
     "test/**/*.js",
-  ]
+  ],
+  "compilerOptions": {
+    "module": "es2022",
+    "moduleResolution": "node"
+  }
 }

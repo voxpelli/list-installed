@@ -1,14 +1,12 @@
-'use strict';
+import { opendir } from 'node:fs/promises';
+import pathModule from 'node:path';
 
-const { opendir } = require('fs').promises;
-const pathModule = require('path');
-
-const readPkg = require('read-pkg');
+import { readPackage } from 'read-pkg';
 
 // TODO [engine:node@>=16.0.0]: We can use this natively now
 /** @type {(input: string, searchValue: string | RegExp, replaceValue: string | ((substring: string, ...args: any[]) => string)) => string} */
 // @ts-ignore
-const replaceAll = require('string.prototype.replaceall');
+import replaceAll from 'string.prototype.replaceall';
 
 /**
  * @param {any} value
@@ -33,7 +31,7 @@ const platformIndependentRepresentation = (moduleName) => replaceAll(moduleName,
  * @param {string} [prefix]
  * @returns {AsyncGenerator<string>}
  */
-const _internalReaddirScoped = async function * (path, skipScoped, prefix) {
+async function * _internalReaddirScoped (path, skipScoped, prefix) {
   const dir = (
     typeof path === 'string'
       ? await opendir(path)
@@ -53,7 +51,7 @@ const _internalReaddirScoped = async function * (path, skipScoped, prefix) {
       yield platformIndependentRepresentation(moduleName);
     }
   }
-};
+}
 
 /**
  * Returns all directories in `path`, with the scoped directories (like `@foo`) expanded and joined with the directories directly beneath them
@@ -65,9 +63,9 @@ const _internalReaddirScoped = async function * (path, skipScoped, prefix) {
  * @param {string|import('fs').Dir} path The path to the directory, either absolute or relative to current working directory
  * @returns {AsyncGenerator<string>}
  */
-const readdirScoped = async function * (path) {
+export async function * readdirScoped (path) {
   yield * _internalReaddirScoped(path);
-};
+}
 
 /**
  * @private
@@ -76,7 +74,7 @@ const readdirScoped = async function * (path) {
  * @param {string} [prefix]
  * @returns {AsyncGenerator<string>}
  */
-const _internalReaddirModuleTree = async function * (inputDir, depth = 0, prefix) {
+async function * _internalReaddirModuleTree (inputDir, depth = 0, prefix) {
   for await (const modulePath of _internalReaddirScoped(inputDir, false, prefix)) {
     yield platformIndependentRepresentation(modulePath);
 
@@ -96,7 +94,7 @@ const _internalReaddirModuleTree = async function * (inputDir, depth = 0, prefix
       }
     }
   }
-};
+}
 
 /**
  * Similar to {@link readdirScoped} but can also return nested modules
@@ -107,7 +105,7 @@ const _internalReaddirModuleTree = async function * (inputDir, depth = 0, prefix
  * @param {number} [depth=0] If not set or if set to 0, then behaves identical to {@link readdirScoped}
  * @returns {AsyncGenerator<string>}
  */
-const readdirModuleTree = async function * (path, depth = 0) {
+export async function * readdirModuleTree (path, depth = 0) {
   const dir = (
     typeof path === 'string'
       ? await opendir(path)
@@ -117,7 +115,7 @@ const readdirModuleTree = async function * (path, depth = 0) {
   if (!dir || typeof dir !== 'object') throw new TypeError('Invalid input to readdirModuleTree()');
 
   yield * _internalReaddirModuleTree(dir, depth);
-};
+}
 
 /**
  * Creates a generator for a list of top level installed modules of a project and their package.json files
@@ -125,7 +123,7 @@ const readdirModuleTree = async function * (path, depth = 0) {
  * @param {string} path The path to the module, either absolute or relative to current working directory
  * @returns {AsyncGenerator<import('type-fest').PackageJson>}
  */
-const listInstalledGenerator = async function * (path) {
+export async function * listInstalledGenerator (path) {
   if (typeof path !== 'string') throw new TypeError('Expected a string input to listInstalledGenerator()');
 
   const nodeModulesDir = pathModule.resolve(path, 'node_modules');
@@ -146,12 +144,12 @@ const listInstalledGenerator = async function * (path) {
     const cwd = pathModule.join(nodeModulesDir, replaceAll(relativeModulePath, PLATFORM_INDEPENDENT_SEPARATOR, pathModule.sep));
 
     try {
-      yield readPkg({ cwd });
+      yield readPackage({ cwd });
     } catch {
       // If we fail to find or read a package.json – then just ignore that module path
     }
   }
-};
+}
 
 /**
  * Creates a generator for a list of top level installed modules of a project and their package.json files
@@ -159,7 +157,7 @@ const listInstalledGenerator = async function * (path) {
  * @param {string} path The path to the module, either absolute or relative to current working directory
  * @returns {Promise<Map<string, import('type-fest').PackageJson>>}
  */
-const listInstalled = async (path) => {
+export async function listInstalled (path) {
   if (typeof path !== 'string') throw new TypeError('Expected a string input to listInstalled()');
 
   const nodeModulesDir = pathModule.resolve(path, 'node_modules');
@@ -174,7 +172,7 @@ const listInstalled = async (path) => {
   try {
     const dir = await opendir(nodeModulesDir);
     for await (const relativeModulePath of readdirModuleTree(dir)) {
-      pkgs.push(readPkg({ cwd: pathModule.join(nodeModulesDir, relativeModulePath) }));
+      pkgs.push(readPackage({ cwd: pathModule.join(nodeModulesDir, relativeModulePath) }));
     }
   } catch (err) {
     if (looksLikeAnErrnoException(err) && err.code === 'ENOENT' && err.path === nodeModulesDir) {
@@ -191,11 +189,4 @@ const listInstalled = async (path) => {
   }
 
   return pkgMap;
-};
-
-module.exports = {
-  readdirScoped,
-  readdirModuleTree,
-  listInstalledGenerator,
-  listInstalled,
-};
+}

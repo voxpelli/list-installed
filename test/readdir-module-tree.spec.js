@@ -1,20 +1,13 @@
-/// <reference types="node" />
-/// <reference types="mocha" />
-/// <reference types="chai" />
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import { join } from 'desm';
 
-'use strict';
-
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-
-const pathModule = require('path');
+import {
+  readdirModuleTree,
+} from '../index.js';
 
 chai.use(chaiAsPromised);
 const should = chai.should();
-
-const {
-  readdirModuleTree,
-} = require('..');
 
 describe('readdirModuleTree()', () => {
   it('should throw on invalid input', async () => {
@@ -34,7 +27,7 @@ describe('readdirModuleTree()', () => {
   });
 
   it('should return sensible values', async () => {
-    for await (const moduleName of readdirModuleTree(pathModule.join(__dirname, '../node_modules'))) {
+    for await (const moduleName of readdirModuleTree(join(import.meta.url, '../node_modules'))) {
       should.exist(moduleName);
       moduleName.should.be.a('string').and.not.match(/^\./);
 
@@ -47,7 +40,7 @@ describe('readdirModuleTree()', () => {
   });
 
   it('should find nested modules', async () => {
-    for await (const moduleName of readdirModuleTree(pathModule.join(__dirname, '../node_modules'), 10)) {
+    for await (const moduleName of readdirModuleTree(join(import.meta.url, '../node_modules'), 10)) {
       should.exist(moduleName);
       moduleName.should.be.a('string').and.not.match(/^\./);
 
