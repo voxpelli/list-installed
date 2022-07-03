@@ -1,6 +1,3 @@
-// @ts-check
-/// <reference types="node" />
-
 'use strict';
 
 const { opendir } = require('fs').promises;
@@ -8,6 +5,7 @@ const pathModule = require('path');
 
 const readPkg = require('read-pkg');
 
+// TODO [engine:node@>=16.0.0]: We can use this natively now
 /** @type {(input: string, searchValue: string | RegExp, replaceValue: string | ((substring: string, ...args: any[]) => string)) => string} */
 // @ts-ignore
 const replaceAll = require('string.prototype.replaceall');
@@ -16,6 +14,7 @@ const replaceAll = require('string.prototype.replaceall');
  * @param {any} value
  * @returns {value is NodeJS.ErrnoException}
  */
+// TODO [engine:node@>=16.0.0]: We can use Object.hasOwn() since Node.js 16.10.0
 // type-coverage:ignore-next-line
 const looksLikeAnErrnoException = (value) => value instanceof Error && Object.prototype.hasOwnProperty.call(value, 'code');
 
