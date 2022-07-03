@@ -14,7 +14,7 @@
     "build:1-declaration": "tsc -p declaration.tsconfig.json",
     "build": "run-s build:*",
     "check:dependency-check": "dependency-check *.js 'test/**/*.js' --no-dev -i type-fest",
-    "check:installed-check": "installed-check",
+    "check:installed-check": "installed-check -i eslint-plugin-jsdoc",
     "check:lint": "eslint .",
     "check:tsc": "tsc",
     "check": "run-s clean && run-p check:*",
