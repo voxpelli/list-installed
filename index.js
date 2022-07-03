@@ -17,7 +17,7 @@ const replaceAll = require('string.prototype.replaceall');
  * @returns {value is NodeJS.ErrnoException}
  */
 // type-coverage:ignore-next-line
-const looksLikeAnErrnoException = (value) => value instanceof Error && Object.hasOwn(value, 'code');
+const looksLikeAnErrnoException = (value) => value instanceof Error && Object.prototype.hasOwnProperty.call(value, 'code');
 
 const PLATFORM_INDEPENDENT_SEPARATOR = '/';
 
