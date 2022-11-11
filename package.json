@@ -68,7 +68,7 @@
     "eslint-plugin-unicorn": "^43.0.2",
     "installed-check": "^6.0.4",
     "mocha": "^10.0.0",
-    "npm-run-all2": "^6.0.1",
+    "npm-run-all2": "^6.0.4",
     "typescript": "~4.6.0",
     "typescript-coverage-report": "^0.6.4"
   }
