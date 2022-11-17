@@ -9,12 +9,10 @@ import { readPackage } from 'read-pkg';
 import replaceAll from 'string.prototype.replaceall';
 
 /**
- * @param {any} value
+ * @param {unknown} value
  * @returns {value is NodeJS.ErrnoException}
  */
-// TODO [engine:node@>=16.0.0]: We can use Object.hasOwn() since Node.js 16.10.0
-// type-coverage:ignore-next-line
-const looksLikeAnErrnoException = (value) => value instanceof Error && Object.prototype.hasOwnProperty.call(value, 'code');
+const looksLikeAnErrnoException = (value) => value instanceof Error && 'code' in value && 'path' in value;
 
 const PLATFORM_INDEPENDENT_SEPARATOR = '/';
 
