@@ -63,7 +63,7 @@ Similar functionality to `readInstalled()` from [`read-installed`](https://www.n
 
 Returns all top level dependencies found installed for a module.
 
-Parses all `package.json` in parallell using [`read-pkg`](https://github.com/sindresorhus/read-pkg) with results corresponding to the [`type-fest`](https://github.com/sindresorhus/type-fest) [`PackageJson`](https://github.com/sindresorhus/type-fest/blob/master/source/package-json.d.ts) type.
+Parses all `package.json` in parallell using [`read-pkg`](https://github.com/sindresorhus/read-pkg) with results corresponding to the [`read-pkg`](https://github.com/sindresorhus/read-pkg) [`NormalizedPackageJson`](https://github.com/sindresorhus/read-pkg/blob/f50f5ffd4d5d25ef3387562c2e32e22ba68552dd/index.d.ts#L24) type.
 
 ### `listInstalledGenerator(path)`
 

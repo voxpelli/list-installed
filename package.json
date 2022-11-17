@@ -19,7 +19,7 @@
     "build:0": "run-s clean",
     "build:1-declaration": "tsc -p declaration.tsconfig.json",
     "build": "run-s build:*",
-    "check:dependency-check": "dependency-check *.js 'test/**/*.js' --no-dev -i type-fest",
+    "check:dependency-check": "dependency-check *.js 'test/**/*.js' --no-dev",
     "check:installed-check": "installed-check -i eslint-plugin-jsdoc",
     "check:lint": "eslint --report-unused-disable-directives .",
     "check:tsc": "tsc",
@@ -40,8 +40,7 @@
   },
   "dependencies": {
     "read-pkg": "^7.1.0",
-    "string.prototype.replaceall": "^1.0.7",
-    "type-fest": "^2.19.0"
+    "string.prototype.replaceall": "^1.0.7"
   },
   "devDependencies": {
     "@types/chai": "^4.3.4",
