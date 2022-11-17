@@ -8,6 +8,8 @@ import { readPackage } from 'read-pkg';
 // @ts-ignore
 import replaceAll from 'string.prototype.replaceall';
 
+/** @typedef {import('read-pkg').NormalizedPackageJson} NormalizedPackageJson */
+
 /**
  * @param {unknown} value
  * @returns {value is NodeJS.ErrnoException}
@@ -119,7 +121,7 @@ export async function * readdirModuleTree (path, depth = 0) {
  * Creates a generator for a list of top level installed modules of a project and their package.json files
  *
  * @param {string} path The path to the module, either absolute or relative to current working directory
- * @returns {AsyncGenerator<import('read-pkg').NormalizedPackageJson>}
+ * @returns {AsyncGenerator<NormalizedPackageJson>}
  */
 export async function * listInstalledGenerator (path) {
   if (typeof path !== 'string') throw new TypeError('Expected a string input to listInstalledGenerator()');
@@ -153,7 +155,7 @@ export async function * listInstalledGenerator (path) {
  * Creates a generator for a list of top level installed modules of a project and their package.json files
  *
  * @param {string} path The path to the module, either absolute or relative to current working directory
- * @returns {Promise<Map<string, import('read-pkg').NormalizedPackageJson>>}
+ * @returns {Promise<Map<string, NormalizedPackageJson>>}
  */
 export async function listInstalled (path) {
   if (typeof path !== 'string') throw new TypeError('Expected a string input to listInstalled()');
@@ -163,7 +165,7 @@ export async function listInstalled (path) {
   /**
    * Rather than using listInstalledGenerator() to sequentially get the data, we add all of the package reads here and does a Promise.all() later
    *
-   * @type {Promise<import('read-pkg').NormalizedPackageJson>[]}
+   * @type {Promise<NormalizedPackageJson>[]}
    */
   const pkgs = [];
 
@@ -179,7 +181,7 @@ export async function listInstalled (path) {
     throw err;
   }
 
-  /** @type {Map<string, import('read-pkg').NormalizedPackageJson>} */
+  /** @type {Map<string, NormalizedPackageJson>} */
   const pkgMap = new Map();
 
   for (const pkg of await Promise.all(pkgs)) {
