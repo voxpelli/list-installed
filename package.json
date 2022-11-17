@@ -41,7 +41,7 @@
   "dependencies": {
     "read-pkg": "^7.1.0",
     "string.prototype.replaceall": "^1.0.7",
-    "type-fest": "^2.19.0"
+    "type-fest": "^3.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.4",
