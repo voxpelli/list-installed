@@ -40,8 +40,8 @@
   },
   "dependencies": {
     "read-pkg": "^7.1.0",
-    "string.prototype.replaceall": "^1.0.5",
-    "type-fest": "^2.0.0"
+    "string.prototype.replaceall": "^1.0.7",
+    "type-fest": "^2.19.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.4",
