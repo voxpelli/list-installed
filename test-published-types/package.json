@@ -1,0 +1,9 @@
+{
+  "name": "pony-cause",
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "@types/node": "*",
+    "list-installed": "file:.."
+  }
+}

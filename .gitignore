@@ -15,3 +15,4 @@
 *.d.ts.map
 
 # Library specific ones
+/test-published-types/node_modules
