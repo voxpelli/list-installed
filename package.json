@@ -23,7 +23,7 @@
     "check:installed-check": "installed-check -i eslint-plugin-jsdoc",
     "check:lint": "eslint --report-unused-disable-directives .",
     "check:tsc": "tsc",
-    "check:type-coverage": "typescript-coverage-report --strict --threshold 100 -i 'test/**/*.js'",
+    "check:type-coverage": "type-coverage --detail --strict --at-least 100 --ignore-files 'test/*'",
     "check": "run-s clean && run-p check:*",
     "clean:declarations": "rm -rf $(find . -maxdepth 2 -type f -name '*.d.ts*')",
     "clean": "run-p clean:*",
@@ -48,7 +48,7 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^14.18.38",
     "@voxpelli/eslint-config": "^15.2.0",
-    "@voxpelli/tsconfig": "^6.1.0",
+    "@voxpelli/tsconfig": "^7.0.0",
     "c8": "^7.13.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
@@ -68,7 +68,7 @@
     "installed-check": "^6.0.5",
     "mocha": "^10.2.0",
     "npm-run-all2": "^6.0.4",
-    "typescript": "~4.9.3",
-    "typescript-coverage-report": "^0.7.0"
+    "type-coverage": "^2.25.0",
+    "typescript": "~5.0.2"
   }
 }
