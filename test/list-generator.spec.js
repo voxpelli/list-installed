@@ -65,8 +65,8 @@ describe('listInstalledGenerator()', function () {
         _id: 'bar@1.0.0',
         name: 'bar',
         readme: 'ERROR: No README data found!',
-        version: '1.0.0'
-      }
+        version: '1.0.0',
+      },
     ]);
   });
 
@@ -82,8 +82,8 @@ describe('listInstalledGenerator()', function () {
         _id: 'bar@1.0.0',
         name: 'bar',
         readme: 'ERROR: No README data found!',
-        version: '1.0.0'
-      }
+        version: '1.0.0',
+      },
     ]);
   });
 });
