@@ -21,5 +21,5 @@ jobs:
     with:
       ts-prebuild-script: 'build'
       ts-versions: ${{ github.event.schedule && 'next' || '4.5,4.6,4.7,4.8,4.9,5.0,next' }}
-      ts-libs: 'es2020;esnext'
+      ts-libs: 'es2021;esnext'
       ts-working-directory: 'test-published-types'
