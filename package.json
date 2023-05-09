@@ -39,7 +39,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "read-pkg": "^7.1.0"
+    "read-pkg": "^8.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",
