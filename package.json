@@ -36,7 +36,7 @@
   "author": "Pelle Wessman <pelle@kodfabrik.se> (http://kodfabrik.se/)",
   "license": "0BSD",
   "engines": {
-    "node": "^14.18.0 || >=16.0.0"
+    "node": ">=16.0.0"
   },
   "dependencies": {
     "read-pkg": "^7.1.0",
@@ -46,7 +46,7 @@
     "@types/chai": "^4.3.5",
     "@types/chai-as-promised": "^7.1.5",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^14.18.38",
+    "@types/node": "^16.18.27",
     "@voxpelli/eslint-config": "^15.2.0",
     "@voxpelli/tsconfig": "^7.0.0",
     "c8": "^7.13.0",
