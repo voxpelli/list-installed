@@ -39,8 +39,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "read-pkg": "^7.1.0",
-    "string.prototype.replaceall": "^1.0.7"
+    "read-pkg": "^7.1.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",

@@ -3,11 +3,6 @@ import pathModule from 'node:path';
 
 import { readPackage } from 'read-pkg';
 
-// TODO [engine:node@>=16.0.0]: We can use this natively now
-/** @type {(input: string, searchValue: string | RegExp, replaceValue: string | ((substring: string, ...args: any[]) => string)) => string} */
-// @ts-ignore
-import replaceAll from 'string.prototype.replaceall';
-
 /** @typedef {import('read-pkg').NormalizedPackageJson} NormalizedPackageJson */
 
 /**
@@ -22,7 +17,7 @@ const PLATFORM_INDEPENDENT_SEPARATOR = '/';
  * @param {string} moduleName
  * @returns {string}
  */
-const platformIndependentRepresentation = (moduleName) => replaceAll(moduleName, pathModule.sep, PLATFORM_INDEPENDENT_SEPARATOR);
+const platformIndependentRepresentation = (moduleName) => moduleName.replaceAll(pathModule.sep, PLATFORM_INDEPENDENT_SEPARATOR);
 
 /**
  * @private
@@ -141,7 +136,7 @@ export async function * listInstalledGenerator (path) {
   }
 
   for await (const relativeModulePath of readdirModuleTree(dir)) {
-    const cwd = pathModule.join(nodeModulesDir, replaceAll(relativeModulePath, PLATFORM_INDEPENDENT_SEPARATOR, pathModule.sep));
+    const cwd = pathModule.join(nodeModulesDir, relativeModulePath.replaceAll(PLATFORM_INDEPENDENT_SEPARATOR, pathModule.sep));
 
     try {
       yield readPackage({ cwd });
