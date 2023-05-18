@@ -6,6 +6,18 @@ import { readPackage } from 'read-pkg';
 /** @typedef {import('read-pkg').NormalizedPackageJson} NormalizedPackageJson */
 
 /**
+ * @callback FilterCallback
+ * @param {NormalizedPackageJson} pkg
+ * @param {string|undefined} alias
+ * @returns {boolean|Promise<boolean>}
+ */
+
+/**
+ * @typedef ListInstalledOptions
+ * @property {FilterCallback} [filter]
+ */
+
+/**
  * @param {unknown} value
  * @returns {value is NodeJS.ErrnoException}
  */
@@ -116,10 +128,14 @@ export async function * readdirModuleTree (path, depth = 0) {
  * Creates a generator for a list of top level installed modules of a project and their package.json files
  *
  * @param {string} path The path to the module, either absolute or relative to current working directory
+ * @param {ListInstalledOptions} options
  * @returns {AsyncGenerator<{ alias: string|undefined, pkg: NormalizedPackageJson }>}
  */
-export async function * listInstalledGenerator (path) {
+export async function * listInstalledGenerator (path, options = {}) {
   if (typeof path !== 'string') throw new TypeError('Expected a string input to listInstalledGenerator()');
+  if (typeof options !== 'object') throw new TypeError('Expected options to be an object for listInstalled()');
+
+  const { filter } = options;
 
   const nodeModulesDir = pathModule.resolve(path, 'node_modules');
 
@@ -142,7 +158,9 @@ export async function * listInstalledGenerator (path) {
       const pkg = await readPackage({ cwd });
       const alias = relativeModulePath === pkg.name ? undefined : relativeModulePath;
 
-      yield { alias, pkg };
+      if (!filter || await filter(pkg, alias)) {
+        yield { alias, pkg };
+      }
     } catch {
       // If we fail to find or read a package.json – then just ignore that module path
     }
@@ -153,17 +171,21 @@ export async function * listInstalledGenerator (path) {
  * Creates a generator for a list of top level installed modules of a project and their package.json files
  *
  * @param {string} path The path to the module, either absolute or relative to current working directory
+ * @param {ListInstalledOptions} options
  * @returns {Promise<Map<string, NormalizedPackageJson>>}
  */
-export async function listInstalled (path) {
+export async function listInstalled (path, options = {}) {
   if (typeof path !== 'string') throw new TypeError('Expected a string input to listInstalled()');
+  if (typeof options !== 'object') throw new TypeError('Expected options to be an object for listInstalled()');
+
+  const { filter } = options;
 
   const nodeModulesDir = pathModule.resolve(path, 'node_modules');
 
   /**
    * Rather than using listInstalledGenerator() to sequentially get the data, we add all of the package reads here and does a Promise.all() later
    *
-   * @type {Promise<NormalizedPackageJson>[]}
+   * @type {Promise<NormalizedPackageJson|undefined>[]}
    */
   const pkgs = [];
   /** @type {string[]} */
@@ -172,7 +194,21 @@ export async function listInstalled (path) {
   try {
     const dir = await opendir(nodeModulesDir);
     for await (const relativeModulePath of readdirModuleTree(dir)) {
-      pkgs.push(readPackage({ cwd: pathModule.join(nodeModulesDir, relativeModulePath) }));
+      /** @type {Promise<NormalizedPackageJson|undefined>} */
+      let lookup = readPackage({ cwd: pathModule.join(nodeModulesDir, relativeModulePath) });
+
+      if (filter) {
+        // eslint-disable-next-line promise/prefer-await-to-then
+        lookup = lookup.then(async (pkg) => {
+          if (!pkg) return;
+
+          const alias = relativeModulePath === pkg.name ? undefined : relativeModulePath;
+
+          return (await filter(pkg, alias)) ? pkg : undefined;
+        });
+      }
+
+      pkgs.push(lookup);
       moduleAliases.push(relativeModulePath);
     }
   } catch (err) {

@@ -53,9 +53,10 @@ Works the same as `readdirScoped` with the addition that if `depth` is set to hi
 
 For a two level deep tree the name returned would be like `foo/node_modules/bar/node_modules/xyz`, which one can do `.split('/node_modules/')` on to get in array shape.
 
-### `listInstalled(path)`
+### `listInstalled(path, [{ filter(pkg, alias) }])`
 
 **`path`**: A `string` pointing to the path of a _module_, either absolute or relative to the current working directory. Eg: `./`
+**`filter`**: An optional callback that's similar to [`Array.prototype.filter()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter). Called with the resolved package file + if the module is aliased also the alias. Like `Array.prototype.filter()` it expects a truthy value back to include the item and a falsy to skip it. If the value returned is a `Promise` it will be resolved before the value is checked.
 
 **Returns:** `Promise` that resolves to a `Map` that has `string` keys of the names of the found dependencies and values being the parsed `package.json` files.
 
@@ -65,9 +66,10 @@ Returns all top level dependencies found installed for a module.
 
 Parses all `package.json` in parallell using [`read-pkg`](https://github.com/sindresorhus/read-pkg) with results corresponding to the [`read-pkg`](https://github.com/sindresorhus/read-pkg) [`NormalizedPackageJson`](https://github.com/sindresorhus/read-pkg/blob/f50f5ffd4d5d25ef3387562c2e32e22ba68552dd/index.d.ts#L24) type.
 
-### `listInstalledGenerator(path)`
+### `listInstalledGenerator(path, [{ filter }])`
 
 **`path`**: A `string` pointing to the path of a _module_, either absolute or relative to the current working directory. Eg: `./`
+**`filter`**: An optional callback that's similar to [`Array.prototype.filter()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter). Called with the resolved package file + if the module is aliased also the alias. Like `Array.prototype.filter()` it expects a truthy value back to include the item and a falsy to skip it. If the value returned is a `Promise` it will be resolved before the value is checked.
 
 **Returns:** `AsyncGenerator` that emits an object for each of the found dependencies. The object has two properties: `alias`, containing the alias when the module has been installed under an alias, and `pkg`, containing the parsed `package.json` files of the found dependencies.
 

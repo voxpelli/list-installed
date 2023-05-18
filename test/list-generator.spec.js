@@ -1,13 +1,24 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { join } from 'desm';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 
 import {
   listInstalledGenerator,
 } from '../index.js';
 
 chai.use(chaiAsPromised);
+chai.use(sinonChai);
+
 const should = chai.should();
+
+const aliasedPkg = () => ({
+  _id: 'bar@1.0.0',
+  name: 'bar',
+  readme: 'ERROR: No README data found!',
+  version: '1.0.0',
+});
 
 describe('listInstalledGenerator()', function () {
   this.timeout(5000);
@@ -98,33 +109,35 @@ describe('listInstalledGenerator()', function () {
     }
 
     packages.should.have.deep.members([
-      {
-        alias: '@voxpelli/bar',
-        pkg: {
-          _id: 'bar@1.0.0',
-          name: 'bar',
-          readme: 'ERROR: No README data found!',
-          version: '1.0.0',
-        },
-      },
-      {
-        alias: undefined,
-        pkg: {
-          _id: 'bar@1.0.0',
-          name: 'bar',
-          readme: 'ERROR: No README data found!',
-          version: '1.0.0',
-        },
-      },
-      {
-        alias: 'bar-foo',
-        pkg: {
-          _id: 'bar@1.0.0',
-          name: 'bar',
-          readme: 'ERROR: No README data found!',
-          version: '1.0.0',
-        },
-      },
+      { pkg: aliasedPkg(), alias: '@voxpelli/bar' },
+      { pkg: aliasedPkg(), alias: 'bar-foo' },
+      { pkg: aliasedPkg(), alias: undefined },
+    ]);
+  });
+
+  it('should apply filters', async () => {
+    const filter = sinon.stub()
+      .callsFake(/** @type {import('../index.js').FilterCallback} */ (pkg, alias) => {
+        if (alias === 'bar-foo') return false;
+        if (pkg.name === 'bar' && alias === undefined) return Promise.resolve(false);
+        return true;
+      });
+
+    /** @type {Array<{ alias: string|undefined, pkg: import('read-pkg').NormalizedPackageJson }>} */
+    const packages = [];
+
+    for await (const item of listInstalledGenerator(join(import.meta.url, './fixtures/containing_aliased_package/'), { filter })) {
+      packages.push(item);
+    }
+
+    filter.should.have.been.calledThrice
+      .and.calledWithExactly(aliasedPkg(), '@voxpelli/bar')
+      .and.calledWithExactly(aliasedPkg(), 'bar-foo')
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      .and.calledWithExactly(aliasedPkg(), undefined);
+
+    packages.should.have.deep.members([
+      { pkg: aliasedPkg(), alias: '@voxpelli/bar' },
     ]);
   });
 });

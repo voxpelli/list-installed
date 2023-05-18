@@ -1,13 +1,24 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { join } from 'desm';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 
 import {
   listInstalled,
 } from '../index.js';
 
 chai.use(chaiAsPromised);
+chai.use(sinonChai);
+
 const should = chai.should();
+
+const aliasedPkg = () => ({
+  _id: 'bar@1.0.0',
+  name: 'bar',
+  readme: 'ERROR: No README data found!',
+  version: '1.0.0',
+});
 
 describe('listInstalled()', function () {
   this.timeout(5000);
@@ -57,33 +68,33 @@ describe('listInstalled()', function () {
     result.should.be.an.instanceOf(Map);
 
     [...result.entries()].should.have.deep.members([
-      [
-        '@voxpelli/bar',
-        {
-          _id: 'bar@1.0.0',
-          name: 'bar',
-          readme: 'ERROR: No README data found!',
-          version: '1.0.0',
-        },
-      ],
-      [
-        'bar',
-        {
-          _id: 'bar@1.0.0',
-          name: 'bar',
-          readme: 'ERROR: No README data found!',
-          version: '1.0.0',
-        },
-      ],
-      [
-        'bar-foo',
-        {
-          _id: 'bar@1.0.0',
-          name: 'bar',
-          readme: 'ERROR: No README data found!',
-          version: '1.0.0',
-        },
-      ],
+      ['@voxpelli/bar', aliasedPkg()],
+      ['bar-foo', aliasedPkg()],
+      ['bar', aliasedPkg()],
+    ]);
+  });
+
+  it('should apply filters', async () => {
+    const filter = sinon.stub()
+      .callsFake(/** @type {import('../index.js').FilterCallback} */ (pkg, alias) => {
+        if (alias === 'bar-foo') return false;
+        if (pkg.name === 'bar' && alias === undefined) return Promise.resolve(false);
+        return true;
+      });
+
+    const result = await listInstalled(join(import.meta.url, './fixtures/containing_aliased_package/'), { filter });
+
+    should.exist(result);
+    result.should.be.an.instanceOf(Map);
+
+    filter.should.have.been.calledThrice
+      .and.calledWithExactly(aliasedPkg(), '@voxpelli/bar')
+      .and.calledWithExactly(aliasedPkg(), 'bar-foo')
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      .and.calledWithExactly(aliasedPkg(), undefined);
+
+    [...result.entries()].should.have.length(1).with.deep.members([
+      ['@voxpelli/bar', aliasedPkg()],
     ]);
   });
 });
