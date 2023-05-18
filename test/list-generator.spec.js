@@ -38,7 +38,7 @@ describe('listInstalledGenerator()', function () {
   });
 
   it('should return sensible values', async () => {
-    for await (const pkg of listInstalledGenerator(join(import.meta.url, '..'))) {
+    for await (const { pkg } of listInstalledGenerator(join(import.meta.url, '..'))) {
       should.exist(pkg);
 
       pkg.should.be.an('object').with.property('name').that.is.a('string');
@@ -54,9 +54,10 @@ describe('listInstalledGenerator()', function () {
   });
 
   it('should ignore package.json less folders in node_modules', async () => {
+    /** @type {import('read-pkg').NormalizedPackageJson[]} */
     const packages = [];
 
-    for await (const pkg of listInstalledGenerator(join(import.meta.url, './fixtures/containing_non_package/'))) {
+    for await (const { pkg } of listInstalledGenerator(join(import.meta.url, './fixtures/containing_non_package/'))) {
       packages.push(pkg);
     }
 
@@ -71,9 +72,10 @@ describe('listInstalledGenerator()', function () {
   });
 
   it('should ignore malformed package.json in node_modules', async () => {
+    /** @type {import('read-pkg').NormalizedPackageJson[]} */
     const packages = [];
 
-    for await (const pkg of listInstalledGenerator(join(import.meta.url, './fixtures/containing_malformed_package/'))) {
+    for await (const { pkg } of listInstalledGenerator(join(import.meta.url, './fixtures/containing_malformed_package/'))) {
       packages.push(pkg);
     }
 
@@ -83,6 +85,45 @@ describe('listInstalledGenerator()', function () {
         name: 'bar',
         readme: 'ERROR: No README data found!',
         version: '1.0.0',
+      },
+    ]);
+  });
+
+  it('should handle aliased packages', async () => {
+    /** @type {Array<{ alias: string|undefined, pkg: import('read-pkg').NormalizedPackageJson }>} */
+    const packages = [];
+
+    for await (const item of listInstalledGenerator(join(import.meta.url, './fixtures/containing_aliased_package/'))) {
+      packages.push(item);
+    }
+
+    packages.should.deep.equal([
+      {
+        alias: '@voxpelli/bar',
+        pkg: {
+          _id: 'bar@1.0.0',
+          name: 'bar',
+          readme: 'ERROR: No README data found!',
+          version: '1.0.0',
+        },
+      },
+      {
+        alias: undefined,
+        pkg: {
+          _id: 'bar@1.0.0',
+          name: 'bar',
+          readme: 'ERROR: No README data found!',
+          version: '1.0.0',
+        },
+      },
+      {
+        alias: 'bar-foo',
+        pkg: {
+          _id: 'bar@1.0.0',
+          name: 'bar',
+          readme: 'ERROR: No README data found!',
+          version: '1.0.0',
+        },
       },
     ]);
   });

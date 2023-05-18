@@ -116,7 +116,7 @@ export async function * readdirModuleTree (path, depth = 0) {
  * Creates a generator for a list of top level installed modules of a project and their package.json files
  *
  * @param {string} path The path to the module, either absolute or relative to current working directory
- * @returns {AsyncGenerator<NormalizedPackageJson>}
+ * @returns {AsyncGenerator<{ alias: string|undefined, pkg: NormalizedPackageJson }>}
  */
 export async function * listInstalledGenerator (path) {
   if (typeof path !== 'string') throw new TypeError('Expected a string input to listInstalledGenerator()');
@@ -139,7 +139,10 @@ export async function * listInstalledGenerator (path) {
     const cwd = pathModule.join(nodeModulesDir, relativeModulePath.replaceAll(PLATFORM_INDEPENDENT_SEPARATOR, pathModule.sep));
 
     try {
-      yield readPackage({ cwd });
+      const pkg = await readPackage({ cwd });
+      const alias = relativeModulePath === pkg.name ? undefined : relativeModulePath;
+
+      yield { alias, pkg };
     } catch {
       // If we fail to find or read a package.json – then just ignore that module path
     }
@@ -163,11 +166,14 @@ export async function listInstalled (path) {
    * @type {Promise<NormalizedPackageJson>[]}
    */
   const pkgs = [];
+  /** @type {string[]} */
+  const moduleAliases = [];
 
   try {
     const dir = await opendir(nodeModulesDir);
     for await (const relativeModulePath of readdirModuleTree(dir)) {
       pkgs.push(readPackage({ cwd: pathModule.join(nodeModulesDir, relativeModulePath) }));
+      moduleAliases.push(relativeModulePath);
     }
   } catch (err) {
     if (looksLikeAnErrnoException(err) && err.code === 'ENOENT' && err.path === nodeModulesDir) {
@@ -179,8 +185,13 @@ export async function listInstalled (path) {
   /** @type {Map<string, NormalizedPackageJson>} */
   const pkgMap = new Map();
 
-  for (const pkg of await Promise.all(pkgs)) {
-    if (pkg.name) pkgMap.set(pkg.name, pkg);
+  const resolvedPkgs = await Promise.all(pkgs);
+
+  for (let i = 0, length = resolvedPkgs.length; i < length; i++) {
+    const alias = moduleAliases[i];
+    const pkg = resolvedPkgs[i];
+
+    if (alias && pkg) pkgMap.set(alias, pkg);
   }
 
   return pkgMap;

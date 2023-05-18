@@ -40,7 +40,7 @@ describe('listInstalled()', function () {
       should.exist(pkg);
 
       moduleName.should.be.a('string');
-      pkg.should.be.an('object').with.property('name', moduleName);
+      pkg.should.be.an('object').with.property('name').that.is.a('string');
 
       if (moduleName.startsWith('@')) {
         moduleName.should.match(/^@[\w-.]+\/[\w-.]+$/);
@@ -48,5 +48,42 @@ describe('listInstalled()', function () {
         moduleName.should.not.include('@').and.not.include('/');
       }
     }
+  });
+
+  it('should handle aliased packages', async () => {
+    const result = await listInstalled(join(import.meta.url, './fixtures/containing_aliased_package/'));
+
+    should.exist(result);
+    result.should.be.an.instanceOf(Map);
+
+    [...result.entries()].should.deep.equal([
+      [
+        '@voxpelli/bar',
+        {
+          _id: 'bar@1.0.0',
+          name: 'bar',
+          readme: 'ERROR: No README data found!',
+          version: '1.0.0',
+        },
+      ],
+      [
+        'bar',
+        {
+          _id: 'bar@1.0.0',
+          name: 'bar',
+          readme: 'ERROR: No README data found!',
+          version: '1.0.0',
+        },
+      ],
+      [
+        'bar-foo',
+        {
+          _id: 'bar@1.0.0',
+          name: 'bar',
+          readme: 'ERROR: No README data found!',
+          version: '1.0.0',
+        },
+      ],
+    ]);
   });
 });
