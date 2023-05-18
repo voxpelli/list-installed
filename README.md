@@ -69,6 +69,6 @@ Parses all `package.json` in parallell using [`read-pkg`](https://github.com/sin
 
 **`path`**: A `string` pointing to the path of a _module_, either absolute or relative to the current working directory. Eg: `./`
 
-**Returns:** `AsyncGenerator` that emits the parsed `package.json` files of the found dependencies.
+**Returns:** `AsyncGenerator` that emits an object for each of the found dependencies. The object has two properties: `alias`, containing the alias when the module has been installed under an alias, and `pkg`, containing the parsed `package.json` files of the found dependencies.
 
 Same as `listInstalled(path)`, but rather than parsing `package.json` in parallell, it parses it sequentially at the pace that it is consumed.
