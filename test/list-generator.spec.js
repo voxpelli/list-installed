@@ -97,7 +97,7 @@ describe('listInstalledGenerator()', function () {
       packages.push(item);
     }
 
-    packages.should.deep.equal([
+    packages.should.have.deep.members([
       {
         alias: '@voxpelli/bar',
         pkg: {

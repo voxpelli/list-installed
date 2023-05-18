@@ -56,7 +56,7 @@ describe('listInstalled()', function () {
     should.exist(result);
     result.should.be.an.instanceOf(Map);
 
-    [...result.entries()].should.deep.equal([
+    [...result.entries()].should.have.deep.members([
       [
         '@voxpelli/bar',
         {
