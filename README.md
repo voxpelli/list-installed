@@ -32,9 +32,9 @@ for (const [moduleName, pkg] of pkgMap.entries()) {
 
 ### `readdirScoped(path)`
 
-**`path`**: A `string` pointing to the path of a _directory_, either absolute or relative to the current working directory. Eg: `./node_modules/`
+* **`path`**: A `string` pointing to the path of a _directory_, either absolute or relative to the current working directory. Eg: `./node_modules/`
 
-**Returns:** `AsyncGenerator` that emits `string`:s of the name of each found directory
+**Returns:** `AsyncGenerator` that emits `string` of the name of each found directory
 
 Similar functionality to `readdir()` from [`readdir-scoped-modules`](https://www.npmjs.com/package/readdir-scoped-modules).
 
@@ -44,10 +44,10 @@ Will not return any directory with a name that begins with `.`.
 
 ### `readdirModuleTree(path, depth=0)`
 
-**`path`**: A `string` pointing to the path of a _directory_, either absolute or relative to the current working directory. Eg: `./node_modules/`
-**`depth`**: If set to `0`, then this method is identical to `readdirScoped(path)`, else this will return also modules found this many layers deep
+* **`path`**: A `string` pointing to the path of a _directory_, either absolute or relative to the current working directory. Eg: * `./node_modules/`
+* **`depth`**: If set to `0`, then this method is identical to `readdirScoped(path)`, else this will return also modules found this many layers deep
 
-**Returns:** `AsyncGenerator` that emits `string`:s the path to each found module, relative to the provided `path`
+**Returns:** `AsyncGenerator` that emits `string` the path to each found module, relative to the provided `path`
 
 Works the same as `readdirScoped` with the addition that if `depth` is set to higher than `0`, then for every result of `readdirScoped` a `node_modules` subdirectory is looked for and if found, `readdirScoped` is run on that directory as well, prefixing all results with the parent name/prefix followed by `/node_modules/`.
 
@@ -55,8 +55,8 @@ For a two level deep tree the name returned would be like `foo/node_modules/bar/
 
 ### `listInstalled(path, [{ filter(pkg, alias) }])`
 
-**`path`**: A `string` pointing to the path of a _module_, either absolute or relative to the current working directory. Eg: `./`
-**`filter`**: An optional callback that's similar to [`Array.prototype.filter()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter). Called with the resolved package file + if the module is aliased also the alias. Like `Array.prototype.filter()` it expects a truthy value back to include the item and a falsy to skip it. If the value returned is a `Promise` it will be resolved before the value is checked.
+* **`path`**: A `string` pointing to the path of a _module_, either absolute or relative to the current working directory. Eg: `./* `
+* **`filter`**: An optional callback that's similar to [`Array.prototype.filter()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter). Called with the resolved package file + if the module is aliased also the alias. Like `Array.prototype.filter()` it expects a truthy value back to include the item and a falsy to skip it. If the value returned is a `Promise` it will be resolved before the value is checked.
 
 **Returns:** `Promise` that resolves to a `Map` that has `string` keys of the names of the found dependencies and values being the parsed `package.json` files.
 
@@ -68,8 +68,8 @@ Parses all `package.json` in parallell using [`read-pkg`](https://github.com/sin
 
 ### `listInstalledGenerator(path, [{ filter }])`
 
-**`path`**: A `string` pointing to the path of a _module_, either absolute or relative to the current working directory. Eg: `./`
-**`filter`**: An optional callback that's similar to [`Array.prototype.filter()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter). Called with the resolved package file + if the module is aliased also the alias. Like `Array.prototype.filter()` it expects a truthy value back to include the item and a falsy to skip it. If the value returned is a `Promise` it will be resolved before the value is checked.
+* **`path`**: A `string` pointing to the path of a _module_, either absolute or relative to the current working directory. Eg: `./* `
+* **`filter`**: An optional callback that's similar to [`Array.prototype.filter()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter). Called with the resolved package file + if the module is aliased also the alias. Like `Array.prototype.filter()` it expects a truthy value back to include the item and a falsy to skip it. If the value returned is a `Promise` it will be resolved before the value is checked.
 
 **Returns:** `AsyncGenerator` that emits an object for each of the found dependencies. The object has two properties: `alias`, containing the alias when the module has been installed under an alias, and `pkg`, containing the parsed `package.json` files of the found dependencies.
 
