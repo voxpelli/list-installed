@@ -2,7 +2,7 @@ import { opendir } from 'node:fs/promises';
 import pathModule from 'node:path';
 
 import { readPackage } from 'read-pkg';
-import { map } from 'buffered-async-iterable';
+import { bufferedAsyncMap } from 'buffered-async-iterable';
 
 /** @typedef {import('read-pkg').NormalizedPackageJson} NormalizedPackageJson */
 
@@ -48,7 +48,7 @@ async function * _internalReaddirScoped (path, skipScoped, prefix) {
 
   if (!dir || typeof dir !== 'object') throw new TypeError('Invalid input to readdirScoped()');
 
-  yield * map(dir, async function * (file) {
+  yield * bufferedAsyncMap(dir, async function * (file) {
     if (!file.isDirectory()) return;
 
     const moduleName = (prefix || '') + file.name;
@@ -85,7 +85,7 @@ export async function * readdirScoped (path) {
  * @returns {AsyncGenerator<string>}
  */
 async function * _internalReaddirModuleTree (inputDir, depth = 0, prefix) {
-  yield * map(_internalReaddirScoped(inputDir, false, prefix), async function * (modulePath) {
+  yield * bufferedAsyncMap(_internalReaddirScoped(inputDir, false, prefix), async function * (modulePath) {
     yield platformIndependentRepresentation(modulePath);
 
     if (depth < 1) return;
@@ -154,7 +154,7 @@ export async function * listInstalledGenerator (path, options = {}) {
     throw err;
   }
 
-  yield * map(readdirModuleTree(dir), async function * (relativeModulePath) {
+  yield * bufferedAsyncMap(readdirModuleTree(dir), async function * (relativeModulePath) {
     const cwd = pathModule.join(nodeModulesDir, relativeModulePath.replaceAll(PLATFORM_INDEPENDENT_SEPARATOR, pathModule.sep));
 
     try {
