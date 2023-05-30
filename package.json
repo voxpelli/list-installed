@@ -39,6 +39,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
+    "buffered-async-iterable": "^0.2.0",
     "read-pkg": "^8.0.0"
   },
   "devDependencies": {

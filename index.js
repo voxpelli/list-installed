@@ -2,6 +2,7 @@ import { opendir } from 'node:fs/promises';
 import pathModule from 'node:path';
 
 import { readPackage } from 'read-pkg';
+import { bufferedAsyncMap } from 'buffered-async-iterable';
 
 /** @typedef {import('read-pkg').NormalizedPackageJson} NormalizedPackageJson */
 
@@ -47,17 +48,19 @@ async function * _internalReaddirScoped (path, skipScoped, prefix) {
 
   if (!dir || typeof dir !== 'object') throw new TypeError('Invalid input to readdirScoped()');
 
-  for await (const file of dir) {
-    if (!file.isDirectory()) continue;
+  yield * bufferedAsyncMap(dir, async function * (file) {
+    if (!file.isDirectory()) return;
 
     const moduleName = (prefix || '') + file.name;
 
     if (file.name.startsWith('@')) {
-      if (!skipScoped) yield * _internalReaddirScoped(pathModule.join(dir.path, file.name), false, moduleName + pathModule.sep);
+      if (!skipScoped) {
+        yield * _internalReaddirScoped(pathModule.join(dir.path, file.name), false, moduleName + pathModule.sep);
+      }
     } else if (!file.name.startsWith('.')) {
       yield platformIndependentRepresentation(moduleName);
     }
-  }
+  });
 }
 
 /**
@@ -82,10 +85,10 @@ export async function * readdirScoped (path) {
  * @returns {AsyncGenerator<string>}
  */
 async function * _internalReaddirModuleTree (inputDir, depth = 0, prefix) {
-  for await (const modulePath of _internalReaddirScoped(inputDir, false, prefix)) {
+  yield * bufferedAsyncMap(_internalReaddirScoped(inputDir, false, prefix), async function * (modulePath) {
     yield platformIndependentRepresentation(modulePath);
 
-    if (depth < 1) continue;
+    if (depth < 1) return;
 
     const subModule = pathModule.join(prefix || '', modulePath, 'node_modules');
     const subModulePath = pathModule.join(inputDir.path, subModule);
@@ -100,7 +103,7 @@ async function * _internalReaddirModuleTree (inputDir, depth = 0, prefix) {
         throw err;
       }
     }
-  }
+  });
 }
 
 /**
@@ -151,7 +154,7 @@ export async function * listInstalledGenerator (path, options = {}) {
     throw err;
   }
 
-  for await (const relativeModulePath of readdirModuleTree(dir)) {
+  yield * bufferedAsyncMap(readdirModuleTree(dir), async function * (relativeModulePath) {
     const cwd = pathModule.join(nodeModulesDir, relativeModulePath.replaceAll(PLATFORM_INDEPENDENT_SEPARATOR, pathModule.sep));
 
     try {
@@ -164,7 +167,7 @@ export async function * listInstalledGenerator (path, options = {}) {
     } catch {
       // If we fail to find or read a package.json – then just ignore that module path
     }
-  }
+  });
 }
 
 /**
@@ -178,56 +181,11 @@ export async function listInstalled (path, options = {}) {
   if (typeof path !== 'string') throw new TypeError('Expected a string input to listInstalled()');
   if (typeof options !== 'object') throw new TypeError('Expected options to be an object for listInstalled()');
 
-  const { filter } = options;
-
-  const nodeModulesDir = pathModule.resolve(path, 'node_modules');
-
-  /**
-   * Rather than using listInstalledGenerator() to sequentially get the data, we add all of the package reads here and does a Promise.all() later
-   *
-   * @type {Promise<NormalizedPackageJson|undefined>[]}
-   */
-  const pkgs = [];
-  /** @type {string[]} */
-  const moduleAliases = [];
-
-  try {
-    const dir = await opendir(nodeModulesDir);
-    for await (const relativeModulePath of readdirModuleTree(dir)) {
-      /** @type {Promise<NormalizedPackageJson|undefined>} */
-      let lookup = readPackage({ cwd: pathModule.join(nodeModulesDir, relativeModulePath) });
-
-      if (filter) {
-        // eslint-disable-next-line promise/prefer-await-to-then
-        lookup = lookup.then(async (pkg) => {
-          if (!pkg) return;
-
-          const alias = relativeModulePath === pkg.name ? undefined : relativeModulePath;
-
-          return (await filter(pkg, alias)) ? pkg : undefined;
-        });
-      }
-
-      pkgs.push(lookup);
-      moduleAliases.push(relativeModulePath);
-    }
-  } catch (err) {
-    if (looksLikeAnErrnoException(err) && err.code === 'ENOENT' && err.path === nodeModulesDir) {
-      throw new Error('Non-existing path set: ' + nodeModulesDir);
-    }
-    throw err;
-  }
-
   /** @type {Map<string, NormalizedPackageJson>} */
   const pkgMap = new Map();
 
-  const resolvedPkgs = await Promise.all(pkgs);
-
-  for (let i = 0, length = resolvedPkgs.length; i < length; i++) {
-    const alias = moduleAliases[i];
-    const pkg = resolvedPkgs[i];
-
-    if (alias && pkg) pkgMap.set(alias, pkg);
+  for await (const { alias, pkg } of listInstalledGenerator(path, options)) {
+    pkgMap.set(alias || pkg.name, pkg);
   }
 
   return pkgMap;
