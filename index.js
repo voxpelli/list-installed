@@ -112,7 +112,7 @@ async function * _internalReaddirModuleTree (inputDir, depth = 0, prefix) {
  * For any result of {@link readdirScoped} a lookup towards a `node_modules` subdirectory of that result is done, with the result added and in turn also looked for `node_modules` subdirectories in until the specified `depth` has been reached.
  *
  * @param {string|import('fs').Dir} path The path to the directory, either absolute or relative to current working directory
- * @param {number} [depth=0] If not set or if set to 0, then behaves identical to {@link readdirScoped}
+ * @param {number} [depth] If not set or if set to 0, then behaves identical to {@link readdirScoped}
  * @returns {AsyncGenerator<string>}
  */
 export async function * readdirModuleTree (path, depth = 0) {
