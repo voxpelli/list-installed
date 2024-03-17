@@ -19,7 +19,7 @@
     "build:0": "run-s clean",
     "build:1-declaration": "tsc -p declaration.tsconfig.json",
     "build": "run-s build:*",
-    "check:installed-check": "installed-check -i eslint-plugin-jsdoc -i knip -i installed-check",
+    "check:installed-check": "installed-check",
     "check:knip": "knip",
     "check:lint": "eslint --report-unused-disable-directives .",
     "check:tsc": "tsc",
@@ -37,7 +37,7 @@
   "author": "Pelle Wessman <pelle@kodfabrik.se> (http://kodfabrik.se/)",
   "license": "0BSD",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.6.0"
   },
   "dependencies": {
     "buffered-async-iterable": "^0.2.0",
