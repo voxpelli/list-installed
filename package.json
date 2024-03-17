@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "buffered-async-iterable": "^0.2.0",
-    "read-pkg": "^8.1.0"
+    "read-pkg": "^9.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.3.9",
