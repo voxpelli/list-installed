@@ -4,7 +4,7 @@ import { join } from 'desm';
 
 import {
   readdirScoped,
-} from '../index.js';
+} from '../lib/fs.js';
 
 chai.use(chaiAsPromised);
 const should = chai.should();

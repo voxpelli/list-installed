@@ -6,7 +6,7 @@ import sinonChai from 'sinon-chai';
 
 import {
   listInstalledGenerator,
-} from '../index.js';
+} from '../lib/list.js';
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
@@ -117,7 +117,7 @@ describe('listInstalledGenerator()', function () {
 
   it('should apply filters', async () => {
     const filter = sinon.stub()
-      .callsFake(/** @type {import('../index.js').FilterCallback} */ (pkg, alias) => {
+      .callsFake(/** @type {import('../lib/list.js').FilterCallback} */ (pkg, alias) => {
         if (alias === 'bar-foo') return false;
         if (pkg.name === 'bar' && alias === undefined) return Promise.resolve(false);
         return true;
