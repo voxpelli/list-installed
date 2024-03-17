@@ -47,7 +47,7 @@ Will not return any directory with a name that begins with `.`.
 * **`path`**: A `string` pointing to the path of a _directory_, either absolute or relative to the current working directory. Eg: * `./node_modules/`
 * **`depth`**: If set to `0`, then this method is identical to `readdirScoped(path)`, else this will return also modules found this many layers deep
 
-**Returns:** `AsyncGenerator` that emits `string` the path to each found module, relative to the provided `path`
+**Returns:** `AsyncGenerator` that emits `string` paths, relative to the provided `path`, for each found module
 
 Works the same as `readdirScoped` with the addition that if `depth` is set to higher than `0`, then for every result of `readdirScoped` a `node_modules` subdirectory is looked for and if found, `readdirScoped` is run on that directory as well, prefixing all results with the parent name/prefix followed by `/node_modules/`.
 
