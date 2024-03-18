@@ -4,6 +4,7 @@
     "index.js",
   ],
   "include": [
+    "lib/**/*.js",
     "test/**/*.js",
   ]
 }
