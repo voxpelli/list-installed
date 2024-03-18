@@ -74,3 +74,12 @@ Parses all `package.json` in parallell using [`read-pkg`](https://github.com/sin
 **Returns:** `AsyncGenerator` that emits an object for each of the found dependencies. The object has two properties: `alias`, containing the alias when the module has been installed under an alias, and `pkg`, containing the parsed `package.json` files of the found dependencies.
 
 Same as `listInstalled(path)`, but rather than parsing `package.json` in parallell, it parses it sequentially at the pace that it is consumed.
+
+### `workspaceLookup([options])`
+
+* **`options.includeWorkspaceRoot=true`**: If set to `false`, then the workspace root will not be returned
+* **`options.path='.'`**: A `string` pointing to the path of the module to look up the `package.json` and installed modules for
+* **`options.skipWorkspaces=false`**: If set, then no workspace lookup will be done and no workspaces be returned
+* **`options.workspace`**: An array of strings that should match the name of a workspace, its path or its path prefix. Only matching workspaces will be returned (as well as the root if `includeWorkspaceRoot` is `true`). If a workspace can't be found, then an error will be thrown when the generator has been fully iterated through.
+
+**Returns:** `AsyncGenerator` that emits `{ cwd, installed, pkg, workspace }` for the root (if `includeWorkspaceRoot` is `true`) and each matching workspace (if `skipWorkspaces` isn't `true`). `cwd` is the path to the workspace or root, `installed` is an object that's the combined result of a `listInstalled` for the root and that `cwd`, `pkg` is the `package.json` of the workspace or root and `workspace` is the name of the workspace and is not set on the root result.

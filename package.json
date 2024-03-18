@@ -43,14 +43,17 @@
     "node": ">=18.6.0"
   },
   "dependencies": {
+    "@npmcli/map-workspaces": "^3.0.4",
     "buffered-async-iterable": "^0.3.0",
     "read-pkg": "^9.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.3.12",
     "@types/chai-as-promised": "^7.1.8",
+    "@types/chai-quantifiers": "^1.0.4",
     "@types/mocha": "^10.0.6",
     "@types/node": "^18.19.24",
+    "@types/npmcli__map-workspaces": "^3.0.4",
     "@types/sinon": "^17.0.3",
     "@types/sinon-chai": "^3.2.12",
     "@voxpelli/eslint-config": "^19.0.0",
@@ -58,6 +61,7 @@
     "c8": "^9.1.0",
     "chai": "^4.4.1",
     "chai-as-promised": "^7.1.1",
+    "chai-quantifiers": "^1.0.18",
     "desm": "^1.3.1",
     "eslint": "^8.57.0",
     "eslint-plugin-es-x": "^7.5.0",
