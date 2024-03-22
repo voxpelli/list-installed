@@ -43,7 +43,7 @@ describe('workspaceLookup', () => {
     ]);
   });
 
-  it('should filter out workspaces when requested', async () => {
+  it('should ignore empty workspace filter', async () => {
     const cwd = join(import.meta.url, 'fixtures/workspace');
     /** @type {Array<import('../lib/lookup.js').LookupData>} */
     const data = [];
@@ -52,8 +52,10 @@ describe('workspaceLookup', () => {
       data.push(item);
     }
 
-    data.should.have.length(1).and.deep.equal([
+    data.should.have.length(3).and.deep.equal([
       pkgResult(cwd),
+      workspaceAResult(cwd),
+      workspaceZResult(cwd),
     ]);
   });
 
