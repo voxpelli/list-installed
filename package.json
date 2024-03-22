@@ -45,6 +45,7 @@
   "dependencies": {
     "@npmcli/map-workspaces": "^3.0.4",
     "buffered-async-iterable": "^0.3.0",
+    "pony-cause": "^2.1.10",
     "read-pkg": "^9.0.1"
   },
   "devDependencies": {

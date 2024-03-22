@@ -87,3 +87,17 @@ export const workspaceAResult = (/** @type {string} */ cwd) => ({
     },
   },
 });
+
+export const workspaceZResult = (/** @type {string} */ cwd) => ({
+  cwd: cwd + platformSpecificPath('/packages/z'),
+  workspace: '@voxpelli/workspace-z',
+  pkg: {
+    _id: '@voxpelli/workspace-z@',
+    engines: { node: '>=8.0.0' },
+    name: '@voxpelli/workspace-z',
+    'private': true,
+    readme: 'ERROR: No README data found!',
+    version: '',
+  },
+  installed: pkgResult(cwd).installed,
+});

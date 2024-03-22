@@ -3,7 +3,7 @@ import chaiQuantifiers from 'chai-quantifiers';
 import { join } from 'desm';
 
 import { workspaceLookup } from '../lib/lookup.js';
-import { pkgResult, workspaceAResult } from './fixtures/lookup.js';
+import { pkgResult, workspaceAResult, workspaceZResult } from './fixtures/lookup.js';
 
 chai.use(chaiQuantifiers);
 
@@ -36,9 +36,10 @@ describe('workspaceLookup', () => {
       data.push(item);
     }
 
-    data.should.have.length(2).and.deep.equal([
+    data.should.have.length(3).and.deep.equal([
       pkgResult(cwd),
       workspaceAResult(cwd),
+      workspaceZResult(cwd),
     ]);
   });
 
@@ -110,9 +111,10 @@ describe('workspaceLookup', () => {
       data.push(item);
     }
 
-    data.should.have.length(2).and.deep.equal([
+    data.should.have.length(3).and.deep.equal([
       pkgResult(cwd),
       workspaceAResult(cwd),
+      workspaceZResult(cwd),
     ]);
   });
 
@@ -179,8 +181,9 @@ describe('workspaceLookup', () => {
       data.push(item);
     }
 
-    data.should.have.length(1).and.deep.equal([
+    data.should.have.length(2).and.deep.equal([
       workspaceAResult(cwd),
+      workspaceZResult(cwd),
     ]);
   });
 
