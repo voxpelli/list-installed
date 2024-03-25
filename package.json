@@ -1,6 +1,6 @@
 {
   "name": "list-installed",
-  "version": "5.1.2",
+  "version": "5.2.0",
   "description": "Checks that all dependencies in your package.json have supported versions installed",
   "homepage": "http://github.com/voxpelli/list-installed",
   "repository": {
