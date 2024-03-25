@@ -83,3 +83,11 @@ Same as `listInstalled(path)`, but rather than parsing `package.json` in paralle
 * **`options.workspace`**: An array of strings that should match the name of a workspace, its path or its path prefix. Only matching workspaces will be returned (as well as the root if `includeWorkspaceRoot` is `true`). If a workspace can't be found, then an error will be thrown when the generator has been fully iterated through.
 
 **Returns:** `AsyncGenerator` that emits `{ cwd, installed, pkg, workspace }` for the root (if `includeWorkspaceRoot` is `true`) and each matching workspace (if `skipWorkspaces` isn't `true`). `cwd` is the path to the workspace or root, `installed` is an object that's the combined result of a `listInstalled` for the root and that `cwd`, `pkg` is the `package.json` of the workspace or root and `workspace` is the name of the workspace and is not set on the root result.
+
+## Used by
+
+* [`installed-check`](https://github.com/voxpelli/node-installed-check) / [`installed-check-core`](https://github.com/voxpelli/node-installed-check-core)
+
+## Similar modules
+
+* [`read-workspaces`](https://github.com/voxpelli/read-workspaces) – provides the workspace lookup functionality that this module uses
