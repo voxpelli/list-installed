@@ -90,4 +90,5 @@ Same as `listInstalled(path)`, but rather than parsing `package.json` in paralle
 
 ## Similar modules
 
+* [`list-dependents`](https://github.com/voxpelli/list-dependents) – looks up the the modules depending on a provided module them and returns them in a similar way to this module
 * [`read-workspaces`](https://github.com/voxpelli/read-workspaces) – provides the workspace lookup functionality that this module uses
