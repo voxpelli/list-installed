@@ -50,4 +50,17 @@ describe('readdirModuleTree()', () => {
       }
     }
   });
+
+  it('should follow symlinks', async () => {
+    const cwd = join(import.meta.url, 'fixtures/workspace-interconnected/node_modules');
+
+    /** @type {string[]} */
+    const data = [];
+
+    for await (const moduleName of readdirModuleTree(cwd)) {
+      data.push(moduleName);
+    }
+
+    data.should.have.members(['@voxpelli/workspace-a', '@voxpelli/workspace-z', 'foo', 'bar']);
+  });
 });

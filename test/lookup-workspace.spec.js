@@ -200,4 +200,20 @@ describe('workspaceLookup', () => {
 
     data.should.have.length(0).and.deep.equal([]);
   });
+
+  it('should include references to other workspaces', async () => {
+    const cwd = join(import.meta.url, 'fixtures/workspace-interconnected');
+    /** @type {Array<import('../lib/lookup.js').LookupData>} */
+    const data = [];
+
+    for await (const item of workspaceLookup({ path: cwd })) {
+      data.push(item);
+    }
+
+    data.should.have.length(3).and.deep.equal([
+      pkgResult(cwd, true),
+      workspaceAResult(cwd, true),
+      workspaceZResult(cwd, true),
+    ]);
+  });
 });

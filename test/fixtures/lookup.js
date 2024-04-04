@@ -1,6 +1,35 @@
 import { platformSpecificPath } from '../../lib/utils.js';
 
-export const pkgResult = (/** @type {string} */ cwd) => ({
+const installedInterconnected = () => ({
+  '@voxpelli/workspace-a': {
+    '_id': '@voxpelli/workspace-a@',
+    dependencies: {
+      '@voxpelli/workspace-z': '*',
+      abc: '^1.0.0',
+      bar: '^2.0.0',
+      foo: '^1.0.0',
+    },
+    'engines': {
+      'node': '>=8.0.0',
+    },
+    'name': '@voxpelli/workspace-a',
+    'private': true,
+    'readme': 'ERROR: No README data found!',
+    'version': '',
+  },
+  '@voxpelli/workspace-z': {
+    '_id': '@voxpelli/workspace-z@',
+    'engines': {
+      'node': '>=8.0.0',
+    },
+    'name': '@voxpelli/workspace-z',
+    'private': true,
+    'readme': 'ERROR: No README data found!',
+    'version': '',
+  },
+});
+
+export const pkgResult = (/** @type {string} */ cwd, /** @type {boolean} */ interconnected) => ({
   cwd,
   pkg: {
     _id: '@',
@@ -15,6 +44,7 @@ export const pkgResult = (/** @type {string} */ cwd) => ({
     workspaces: ['packages/*'],
   },
   installed: {
+    ...interconnected && installedInterconnected(),
     bar: {
       '_id': 'bar@1.0.0',
       'engines': {
@@ -38,13 +68,14 @@ export const pkgResult = (/** @type {string} */ cwd) => ({
   },
 });
 
-export const workspaceAResult = (/** @type {string} */ cwd) => ({
+export const workspaceAResult = (/** @type {string} */ cwd, /** @type {boolean} */ interconnected) => ({
   cwd: cwd + platformSpecificPath('/packages/a'),
   workspace: '@voxpelli/workspace-a',
   pkg: {
     _id: '@voxpelli/workspace-a@',
     engines: { node: '>=8.0.0' },
     dependencies: {
+      ...interconnected ? { '@voxpelli/workspace-z': '*' } : {},
       abc: '^1.0.0',
       bar: '^2.0.0',
       foo: '^1.0.0',
@@ -55,6 +86,7 @@ export const workspaceAResult = (/** @type {string} */ cwd) => ({
     version: '',
   },
   installed: {
+    ...interconnected && installedInterconnected(),
     abc: {
       '_id': 'abc@1.0.0',
       'engines': {
@@ -88,7 +120,7 @@ export const workspaceAResult = (/** @type {string} */ cwd) => ({
   },
 });
 
-export const workspaceZResult = (/** @type {string} */ cwd) => ({
+export const workspaceZResult = (/** @type {string} */ cwd, /** @type {boolean} */ interconnected) => ({
   cwd: cwd + platformSpecificPath('/packages/z'),
   workspace: '@voxpelli/workspace-z',
   pkg: {
@@ -99,5 +131,5 @@ export const workspaceZResult = (/** @type {string} */ cwd) => ({
     readme: 'ERROR: No README data found!',
     version: '',
   },
-  installed: pkgResult(cwd).installed,
+  installed: pkgResult(cwd, interconnected).installed,
 });

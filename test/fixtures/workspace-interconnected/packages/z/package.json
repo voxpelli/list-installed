@@ -1,0 +1,5 @@
+{
+  "private": true,
+  "name": "@voxpelli/workspace-z",
+  "engines": { "node": ">=8.0.0" }
+}
