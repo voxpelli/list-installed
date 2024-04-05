@@ -46,7 +46,7 @@
     "buffered-async-iterable": "^0.3.0",
     "pony-cause": "^2.1.10",
     "read-pkg": "^9.0.1",
-    "read-workspaces": "^1.1.1"
+    "read-workspaces": "^1.2.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.14",
