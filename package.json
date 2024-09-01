@@ -56,23 +56,23 @@
     "@types/node": "^18.19.39",
     "@types/sinon": "^17.0.3",
     "@types/sinon-chai": "^3.2.12",
-    "@voxpelli/eslint-config": "^20.0.0-beta.3",
+    "@voxpelli/eslint-config": "^20.1.0",
     "@voxpelli/tsconfig": "^12.0.1",
     "c8": "^10.1.2",
     "chai": "^4.4.1",
     "chai-as-promised": "^7.1.2",
     "chai-quantifiers": "^1.0.18",
     "desm": "^1.3.1",
-    "eslint": "^9.5.0",
+    "eslint": "^9.9.1",
     "husky": "^9.0.11",
     "installed-check": "^9.3.0",
-    "knip": "^5.23.0",
+    "knip": "^5.28.0",
     "mocha": "^10.5.1",
     "npm-run-all2": "^6.2.0",
     "sinon": "^18.0.0",
     "sinon-chai": "^3.7.0",
     "type-coverage": "^2.29.0",
     "typescript": "~5.5.2",
-    "validate-conventional-commit": "^1.0.3"
+    "validate-conventional-commit": "^1.0.4"
   }
 }
