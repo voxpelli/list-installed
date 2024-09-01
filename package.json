@@ -56,7 +56,7 @@
     "@types/node": "^18.19.39",
     "@types/sinon": "^17.0.3",
     "@types/sinon-chai": "^3.2.12",
-    "@voxpelli/eslint-config": "^20.0.0-beta.3",
+    "@voxpelli/eslint-config": "^21.0.0",
     "@voxpelli/tsconfig": "^12.0.1",
     "c8": "^10.1.2",
     "chai": "^4.4.1",
