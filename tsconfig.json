@@ -9,6 +9,7 @@
   ],
   "compilerOptions": {
     // Needed because @types/npmcli__map-workspaces tries to import a non-existing IGlobal from "glob"
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node", "mocha"]
   }
 }
