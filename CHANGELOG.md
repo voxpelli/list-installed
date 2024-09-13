@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.3.2](https://github.com/voxpelli/list-installed/compare/v5.3.1...v5.3.2) (2024-09-13)
+
+
+### 🧹 Chores
+
+* **deps:** update dev dependencies ([06d7d2b](https://github.com/voxpelli/list-installed/commit/06d7d2bb7ba524a683e432ae8fb166a2aba0558f))
+
 ## [5.3.1](https://github.com/voxpelli/list-installed/compare/v5.3.0...v5.3.1) (2024-06-25)
 
 
