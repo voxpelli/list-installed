@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.3.2](https://github.com/voxpelli/list-installed/compare/v5.3.1...v5.3.2) (2024-10-24)
+
+
+### 🧹 Chores
+
+* **deps:** update dev dependencies ([62716c3](https://github.com/voxpelli/list-installed/commit/62716c3f5feebacc92dc426e40d3f5f5233476e0))
+* **deps:** update dev dependencies ([06d7d2b](https://github.com/voxpelli/list-installed/commit/06d7d2bb7ba524a683e432ae8fb166a2aba0558f))
+* fix failed regexp linting ([c069403](https://github.com/voxpelli/list-installed/commit/c069403f323e03c29ed5820364e66cb55126c33e))
+
 ## [5.3.1](https://github.com/voxpelli/list-installed/compare/v5.3.0...v5.3.1) (2024-06-25)
 
 
