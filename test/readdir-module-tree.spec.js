@@ -32,7 +32,7 @@ describe('readdirModuleTree()', () => {
       moduleName.should.be.a('string').and.not.match(/^\./);
 
       if (moduleName.startsWith('@')) {
-        moduleName.should.match(/^@[\w-.]+\/[\w-.]+$/);
+        moduleName.should.match(/^@[\w\-.]+\/[\w\-.]+$/);
       } else {
         moduleName.should.not.include('@').and.not.include('/');
       }
@@ -44,9 +44,9 @@ describe('readdirModuleTree()', () => {
       should.exist(moduleName);
       moduleName.should.be.a('string').and.not.match(/^\./);
 
-      if (moduleName.startsWith('@')) moduleName.should.match(/^@[\w-.]+\/[\w-.]/);
+      if (moduleName.startsWith('@')) moduleName.should.match(/^@[\w\-.]+\/[\w\-.]/);
       if (moduleName.includes('/node_modules/')) {
-        moduleName.should.match(/^(?:@[\w-.]+\/)?[\w-.]+(?:\/node_modules\/(?:@[\w-.]+\/)?[\w-.]+)*$/);
+        moduleName.should.match(/^(?:@[\w\-.]+\/)?[\w\-.]+(?:\/node_modules\/(?:@[\w\-.]+\/)?[\w\-.]+)*$/);
       }
     }
   });

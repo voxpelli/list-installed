@@ -57,7 +57,7 @@ describe('listInstalledGenerator()', function () {
       if (!pkg.name) {
         throw new Error('Should not have been returned');
       } else if (pkg.name.startsWith('@')) {
-        pkg.name.should.match(/^@[\w-.]+\/[\w-.]+$/);
+        pkg.name.should.match(/^@[\w\-.]+\/[\w\-.]+$/);
       } else {
         pkg.name.should.not.include('@').and.not.include('/');
       }

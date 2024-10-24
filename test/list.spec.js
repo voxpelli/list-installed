@@ -54,7 +54,7 @@ describe('listInstalled()', function () {
       pkg.should.be.an('object').with.property('name').that.is.a('string');
 
       if (moduleName.startsWith('@')) {
-        moduleName.should.match(/^@[\w-.]+\/[\w-.]+$/);
+        moduleName.should.match(/^@[\w\-.]+\/[\w\-.]+$/);
       } else {
         moduleName.should.not.include('@').and.not.include('/');
       }

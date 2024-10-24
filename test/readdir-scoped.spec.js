@@ -32,7 +32,7 @@ describe('readdirScoped()', () => {
       moduleName.should.be.a('string').and.not.match(/^\./);
 
       if (moduleName.startsWith('@')) {
-        moduleName.should.match(/^@[\w-.]+\/[\w-.]+$/);
+        moduleName.should.match(/^@[\w\-.]+\/[\w\-.]+$/);
       } else {
         moduleName.should.not.include('@').and.not.include('/');
       }
