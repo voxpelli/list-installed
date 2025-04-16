@@ -22,7 +22,7 @@
     "build:0": "run-s clean",
     "build:1-declaration": "tsc -p declaration.tsconfig.json",
     "build": "run-s build:*",
-    "check:installed-check": "installed-check -i @voxpelli/eslint-config -i eslint",
+    "check:installed-check": "installed-check -i @voxpelli/eslint-config -i eslint -i knip",
     "check:knip": "knip",
     "check:lint": "eslint --report-unused-disable-directives .",
     "check:tsc": "tsc",
