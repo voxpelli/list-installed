@@ -22,7 +22,7 @@
     "build:0": "run-s clean",
     "build:1-declaration": "tsc -p declaration.tsconfig.json",
     "build": "run-s build:*",
-    "check:installed-check": "installed-check -i @voxpelli/eslint-config -i eslint",
+    "check:installed-check": "installed-check -i @voxpelli/eslint-config -i eslint -i knip",
     "check:knip": "knip",
     "check:lint": "eslint --report-unused-disable-directives .",
     "check:tsc": "tsc",
@@ -51,7 +51,6 @@
   "devDependencies": {
     "@types/chai": "^4.3.20",
     "@types/chai-as-promised": "^7.1.8",
-    "@types/chai-quantifiers": "^1.0.4",
     "@types/mocha": "^10.0.9",
     "@types/node": "^18.19.69",
     "@types/sinon": "^17.0.3",
