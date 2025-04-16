@@ -29,7 +29,7 @@ const installedInterconnected = () => ({
   },
 });
 
-export const pkgResult = (/** @type {string} */ cwd, /** @type {boolean} */ interconnected) => ({
+export const pkgResult = (/** @type {string} */ cwd, /** @type {boolean} */ interconnected = false) => ({
   cwd,
   pkg: {
     _id: '@',
@@ -68,7 +68,7 @@ export const pkgResult = (/** @type {string} */ cwd, /** @type {boolean} */ inte
   },
 });
 
-export const workspaceAResult = (/** @type {string} */ cwd, /** @type {boolean} */ interconnected) => ({
+export const workspaceAResult = (/** @type {string} */ cwd, /** @type {boolean} */ interconnected = false) => ({
   cwd: cwd + platformSpecificPath('/packages/a'),
   workspace: '@voxpelli/workspace-a',
   pkg: {
@@ -120,7 +120,7 @@ export const workspaceAResult = (/** @type {string} */ cwd, /** @type {boolean} 
   },
 });
 
-export const workspaceZResult = (/** @type {string} */ cwd, /** @type {boolean} */ interconnected) => ({
+export const workspaceZResult = (/** @type {string} */ cwd, /** @type {boolean} */ interconnected = false) => ({
   cwd: cwd + platformSpecificPath('/packages/z'),
   workspace: '@voxpelli/workspace-z',
   pkg: {
