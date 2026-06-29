@@ -1,5 +1,14 @@
 # Changelog
 
+## [6.0.1](https://github.com/voxpelli/list-installed/compare/v6.0.0...v6.0.1) (2026-06-29)
+
+
+### 🧹 Chores
+
+* **deps:** update dependency typescript to v6 ([#118](https://github.com/voxpelli/list-installed/issues/118)) ([f6ee9e7](https://github.com/voxpelli/list-installed/commit/f6ee9e7ceee899de03246f16032d449becd6270c))
+* **deps:** update linting dependencies ([#115](https://github.com/voxpelli/list-installed/issues/115)) ([1de93fc](https://github.com/voxpelli/list-installed/commit/1de93fc60946154d7a3e4f794028f071a89c5838))
+* **deps:** update type dependencies ([#114](https://github.com/voxpelli/list-installed/issues/114)) ([581a15b](https://github.com/voxpelli/list-installed/commit/581a15b5a0472c3c8eaf065702118cee1fcb09c4))
+
 ## [6.0.0](https://github.com/voxpelli/list-installed/compare/v5.3.1...v6.0.0) (2026-02-23)
 
 
