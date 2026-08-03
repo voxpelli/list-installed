@@ -20,6 +20,6 @@ jobs:
     uses: voxpelli/ghatemplates/.github/workflows/type-check.yml@main
     with:
       ts-prebuild-script: 'build'
-      ts-versions: ${{ github.event.schedule && 'next' || '5.8,5.9,next' }}
-      ts-libs: 'es2022;esnext'
+      ts-versions: ${{ github.event.schedule && 'next' || '5.9,6.0,next' }}
+      ts-libs: 'es2024;esnext'
       ts-working-directory: 'test-published-types'

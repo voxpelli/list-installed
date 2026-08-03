@@ -1,17 +1,13 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import { join } from 'desm';
-import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import { describe, it } from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import {
   listInstalled,
 } from '../lib/list.js';
 
-chai.use(chaiAsPromised);
-chai.use(sinonChai);
-
-const should = chai.should();
+const here = path.dirname(fileURLToPath(import.meta.url));
 
 const aliasedPkg = () => ({
   _id: 'bar@1.0.0',
@@ -20,81 +16,92 @@ const aliasedPkg = () => ({
   version: '1.0.0',
 });
 
-describe('listInstalled()', function () {
-  this.timeout(5000);
-
+describe('listInstalled()', { timeout: 30000 }, () => {
   it('should throw on invalid input', async () => {
     // @ts-ignore
-    await listInstalled()
-      .should.be.rejectedWith(TypeError, 'Expected a string input to listInstalled()');
+    await assert.rejects(listInstalled(), {
+      name: 'TypeError',
+      message: 'Expected a string input to listInstalled()',
+    });
   });
 
   it('should throw on non-existing path', async () => {
-    // @ts-ignore
-    await listInstalled(join(import.meta.url, 'non-existing-path'))
-      .should.be.rejectedWith(Error, /^Non-existing path set: /);
+    await assert.rejects(listInstalled(path.join(here, 'non-existing-path')), {
+      message: /^Non-existing path set: /,
+    });
   });
 
-  it('should return a promise', async () => {
-    const result = listInstalled(join(import.meta.url, '..'));
-    should.exist(result);
-    result.should.be.an.instanceOf(Promise);
+  it('should return a promise', () => {
+    const result = listInstalled(path.join(here, '..'));
+    assert.ok(result instanceof Promise);
   });
 
   it('should resolve to sensible values', async () => {
-    const result = await listInstalled(join(import.meta.url, '..'));
-    should.exist(result);
-    result.should.be.an.instanceOf(Map);
+    const result = await listInstalled(path.join(here, '..'));
+    assert.ok(result instanceof Map);
 
     for (const [moduleName, pkg] of result.entries()) {
-      should.exist(moduleName);
-      should.exist(pkg);
+      assert.ok(moduleName);
+      assert.ok(pkg);
 
-      moduleName.should.be.a('string');
-      pkg.should.be.an('object').with.property('name').that.is.a('string');
+      assert.equal(typeof moduleName, 'string');
+      assert.equal(typeof pkg, 'object');
+      assert.equal(typeof pkg.name, 'string');
 
       if (moduleName.startsWith('@')) {
-        moduleName.should.match(/^@[\w\-.]+\/[\w\-.]+$/);
+        assert.match(moduleName, /^@[\w\-.]+\/[\w\-.]+$/);
       } else {
-        moduleName.should.not.include('@').and.not.include('/');
+        assert.ok(!moduleName.includes('@') && !moduleName.includes('/'));
       }
     }
   });
 
   it('should handle aliased packages', async () => {
-    const result = await listInstalled(join(import.meta.url, './fixtures/containing_aliased_package/'));
+    const result = await listInstalled(path.join(here, 'fixtures/containing_aliased_package'));
 
-    should.exist(result);
-    result.should.be.an.instanceOf(Map);
+    assert.ok(result instanceof Map);
 
-    [...result.entries()].should.have.deep.members([
+    /** @type {Array<[string, import('../lib/list.js').NormalizedPackageJson]>} */
+    const expected = [
       ['@voxpelli/bar', aliasedPkg()],
-      ['bar-foo', aliasedPkg()],
       ['bar', aliasedPkg()],
-    ]);
+      ['bar-foo', aliasedPkg()],
+    ];
+
+    assert.deepStrictEqual(
+      [...result.entries()].toSorted(([a], [b]) => a.localeCompare(b)),
+      expected.toSorted(([a], [b]) => a.localeCompare(b))
+    );
   });
 
-  it('should apply filters', async () => {
-    const filter = sinon.stub()
-      .callsFake(/** @type {import('../lib/list.js').FilterCallback} */ (pkg, alias) => {
-        if (alias === 'bar-foo') return false;
-        if (pkg.name === 'bar' && alias === undefined) return Promise.resolve(false);
-        return true;
-      });
+  it('should apply filters', async (t) => {
+    const filter = t.mock.fn(/** @type {import('../lib/list.js').FilterCallback} */ (pkg, alias) => {
+      if (alias === 'bar-foo') return false;
+      if (pkg.name === 'bar' && alias === undefined) return Promise.resolve(false);
+      return true;
+    });
 
-    const result = await listInstalled(join(import.meta.url, './fixtures/containing_aliased_package/'), { filter });
+    const result = await listInstalled(path.join(here, 'fixtures/containing_aliased_package'), { filter });
 
-    should.exist(result);
-    result.should.be.an.instanceOf(Map);
+    assert.ok(result instanceof Map);
 
-    filter.should.have.been.calledThrice
-      .and.calledWithExactly(aliasedPkg(), '@voxpelli/bar')
-      .and.calledWithExactly(aliasedPkg(), 'bar-foo')
-      // eslint-disable-next-line unicorn/no-useless-undefined
-      .and.calledWithExactly(aliasedPkg(), undefined);
+    assert.equal(filter.mock.callCount(), 3);
 
-    [...result.entries()].should.have.length(1).with.deep.members([
-      ['@voxpelli/bar', aliasedPkg()],
-    ]);
+    /** @type {Array<[unknown, unknown]>} */
+    const expectedCalls = [
+      [aliasedPkg(), '@voxpelli/bar'],
+      [aliasedPkg(), 'bar-foo'],
+      [aliasedPkg(), undefined],
+    ];
+
+    assert.deepStrictEqual(
+      filter.mock.calls.map(call => call.arguments).toSorted((a, b) => String(a[1]).localeCompare(String(b[1]))),
+      expectedCalls.toSorted((a, b) => String(a[1]).localeCompare(String(b[1])))
+    );
+
+    assert.deepStrictEqual(
+      [...result.entries()].toSorted(([a], [b]) => a.localeCompare(b)),
+      [['@voxpelli/bar', aliasedPkg()]]
+    );
   });
 });

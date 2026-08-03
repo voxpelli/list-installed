@@ -1,17 +1,13 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import { join } from 'desm';
-import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import { describe, it } from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import {
   listInstalledGenerator,
 } from '../lib/list.js';
 
-chai.use(chaiAsPromised);
-chai.use(sinonChai);
-
-const should = chai.should();
+const here = path.dirname(fileURLToPath(import.meta.url));
 
 const aliasedPkg = () => ({
   _id: 'bar@1.0.0',
@@ -20,46 +16,41 @@ const aliasedPkg = () => ({
   version: '1.0.0',
 });
 
-describe('listInstalledGenerator()', function () {
-  this.timeout(5000);
-
+describe('listInstalledGenerator()', { timeout: 30000 }, () => {
   it('should throw on invalid input', async () => {
-    await (async () => {
-      // @ts-ignore
-      // eslint-disable-next-line no-unused-vars, no-empty
-      for await (const _foo of listInstalledGenerator()) {}
-    })()
-      .should.be.rejectedWith(TypeError, 'Expected a string input to listInstalledGenerator()');
+    // @ts-ignore
+    const iterator = listInstalledGenerator();
+    await assert.rejects(iterator.next(), {
+      name: 'TypeError',
+      message: 'Expected a string input to listInstalledGenerator()',
+    });
   });
 
   it('should throw on non-existing path', async () => {
-    await (async () => {
-      // @ts-ignore
-      // eslint-disable-next-line no-unused-vars, no-empty
-      for await (const _foo of listInstalledGenerator(join(import.meta.url, 'non-existing-path'))) {}
-    })()
-      .should.be.rejectedWith(Error, /^Non-existing path set: /);
+    const iterator = listInstalledGenerator(path.join(here, 'non-existing-path'));
+    await assert.rejects(iterator.next(), {
+      message: /^Non-existing path set: /,
+    });
   });
 
-  it('should return an async iterator', async () => {
+  it('should return an async iterator', () => {
     const result = listInstalledGenerator('foo');
-    should.exist(result);
-    (typeof result === 'object').should.be.ok;
-    should.exist(result[Symbol.asyncIterator]);
+    assert.ok(result);
+    assert.equal(typeof result, 'object');
+    assert.ok(result[Symbol.asyncIterator]);
   });
 
   it('should return sensible values', async () => {
-    for await (const { pkg } of listInstalledGenerator(join(import.meta.url, '..'))) {
-      should.exist(pkg);
+    for await (const { pkg } of listInstalledGenerator(path.join(here, '..'))) {
+      assert.ok(pkg);
 
-      pkg.should.be.an('object').with.property('name').that.is.a('string');
+      assert.equal(typeof pkg, 'object');
+      assert.equal(typeof pkg.name, 'string');
 
-      if (!pkg.name) {
-        throw new Error('Should not have been returned');
-      } else if (pkg.name.startsWith('@')) {
-        pkg.name.should.match(/^@[\w\-.]+\/[\w\-.]+$/);
+      if (pkg.name.startsWith('@')) {
+        assert.match(pkg.name, /^@[\w\-.]+\/[\w\-.]+$/);
       } else {
-        pkg.name.should.not.include('@').and.not.include('/');
+        assert.ok(!pkg.name.includes('@') && !pkg.name.includes('/'));
       }
     }
   });
@@ -68,11 +59,11 @@ describe('listInstalledGenerator()', function () {
     /** @type {import('read-pkg').NormalizedPackageJson[]} */
     const packages = [];
 
-    for await (const { pkg } of listInstalledGenerator(join(import.meta.url, './fixtures/containing_non_package/'))) {
+    for await (const { pkg } of listInstalledGenerator(path.join(here, 'fixtures/containing_non_package'))) {
       packages.push(pkg);
     }
 
-    packages.should.deep.equal([
+    assert.deepStrictEqual(packages, [
       {
         _id: 'bar@1.0.0',
         name: 'bar',
@@ -86,11 +77,11 @@ describe('listInstalledGenerator()', function () {
     /** @type {import('read-pkg').NormalizedPackageJson[]} */
     const packages = [];
 
-    for await (const { pkg } of listInstalledGenerator(join(import.meta.url, './fixtures/containing_malformed_package/'))) {
+    for await (const { pkg } of listInstalledGenerator(path.join(here, 'fixtures/containing_malformed_package'))) {
       packages.push(pkg);
     }
 
-    packages.should.deep.equal([
+    assert.deepStrictEqual(packages, [
       {
         _id: 'bar@1.0.0',
         name: 'bar',
@@ -104,40 +95,56 @@ describe('listInstalledGenerator()', function () {
     /** @type {Array<{ alias: string|undefined, pkg: import('read-pkg').NormalizedPackageJson }>} */
     const packages = [];
 
-    for await (const item of listInstalledGenerator(join(import.meta.url, './fixtures/containing_aliased_package/'))) {
+    for await (const item of listInstalledGenerator(path.join(here, 'fixtures/containing_aliased_package'))) {
       packages.push(item);
     }
 
-    packages.should.have.deep.members([
+    /** @type {Array<{ alias: string|undefined, pkg: import('read-pkg').NormalizedPackageJson }>} */
+    const expected = [
       { pkg: aliasedPkg(), alias: '@voxpelli/bar' },
       { pkg: aliasedPkg(), alias: 'bar-foo' },
       { pkg: aliasedPkg(), alias: undefined },
-    ]);
+    ];
+
+    assert.deepStrictEqual(
+      packages.toSorted((a, b) => String(a.alias).localeCompare(String(b.alias))),
+      expected.toSorted((a, b) => String(a.alias).localeCompare(String(b.alias)))
+    );
   });
 
-  it('should apply filters', async () => {
-    const filter = sinon.stub()
-      .callsFake(/** @type {import('../lib/list.js').FilterCallback} */ (pkg, alias) => {
-        if (alias === 'bar-foo') return false;
-        if (pkg.name === 'bar' && alias === undefined) return Promise.resolve(false);
-        return true;
-      });
+  it('should apply filters', async (t) => {
+    const filter = t.mock.fn(/** @type {import('../lib/list.js').FilterCallback} */ (pkg, alias) => {
+      if (alias === 'bar-foo') return false;
+      if (pkg.name === 'bar' && alias === undefined) return Promise.resolve(false);
+      return true;
+    });
 
     /** @type {Array<{ alias: string|undefined, pkg: import('read-pkg').NormalizedPackageJson }>} */
     const packages = [];
 
-    for await (const item of listInstalledGenerator(join(import.meta.url, './fixtures/containing_aliased_package/'), { filter })) {
+    for await (const item of listInstalledGenerator(path.join(here, 'fixtures/containing_aliased_package'), { filter })) {
       packages.push(item);
     }
 
-    filter.should.have.been.calledThrice
-      .and.calledWithExactly(aliasedPkg(), '@voxpelli/bar')
-      .and.calledWithExactly(aliasedPkg(), 'bar-foo')
-      // eslint-disable-next-line unicorn/no-useless-undefined
-      .and.calledWithExactly(aliasedPkg(), undefined);
+    assert.equal(filter.mock.callCount(), 3);
 
-    packages.should.have.deep.members([
-      { pkg: aliasedPkg(), alias: '@voxpelli/bar' },
-    ]);
+    /** @type {Array<[unknown, unknown]>} */
+    const expectedCalls = [
+      [aliasedPkg(), '@voxpelli/bar'],
+      [aliasedPkg(), 'bar-foo'],
+      [aliasedPkg(), undefined],
+    ];
+
+    assert.deepStrictEqual(
+      filter.mock.calls.map(call => call.arguments).toSorted((a, b) => String(a[1]).localeCompare(String(b[1]))),
+      expectedCalls.toSorted((a, b) => String(a[1]).localeCompare(String(b[1])))
+    );
+
+    assert.deepStrictEqual(
+      packages.toSorted((a, b) => String(a.alias).localeCompare(String(b.alias))),
+      [
+        { pkg: aliasedPkg(), alias: '@voxpelli/bar' },
+      ]
+    );
   });
 });

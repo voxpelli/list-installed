@@ -1,5 +1,5 @@
 {
-  "extends": "@voxpelli/tsconfig/node20.json",
+  "extends": "@voxpelli/tsconfig/node22.json",
   "files": [
     "index.js",
   ],
@@ -10,6 +10,6 @@
   "compilerOptions": {
     // Needed because @types/npmcli__map-workspaces tries to import a non-existing IGlobal from "glob"
     "skipLibCheck": true,
-    "types": ["node", "mocha"]
+    "types": ["node"]
   }
 }

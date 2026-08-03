@@ -1,40 +1,41 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import { join } from 'desm';
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import { describe, it } from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import {
   readdirScoped,
 } from '../lib/fs.js';
 
-chai.use(chaiAsPromised);
-const should = chai.should();
+const here = path.dirname(fileURLToPath(import.meta.url));
 
 describe('readdirScoped()', () => {
   it('should throw on invalid input', async () => {
-    await (async () => {
-      // @ts-ignore
-      // eslint-disable-next-line no-unused-vars, no-empty
-      for await (const _foo of readdirScoped()) {}
-    })()
-      .should.be.rejectedWith(TypeError, 'Invalid input to readdirScoped()');
+    // @ts-ignore
+    const iterator = readdirScoped();
+    await assert.rejects(iterator.next(), {
+      name: 'TypeError',
+      message: 'Invalid input to readdirScoped()',
+    });
   });
 
-  it('should return an async iterator', async () => {
+  it('should return an async iterator', () => {
     const result = readdirScoped('foo');
-    should.exist(result);
-    (typeof result === 'object').should.be.ok;
-    should.exist(result[Symbol.asyncIterator]);
+    assert.ok(result);
+    assert.equal(typeof result, 'object');
+    assert.ok(result[Symbol.asyncIterator]);
   });
 
   it('should return sensible values', async () => {
-    for await (const moduleName of readdirScoped(join(import.meta.url, '../node_modules'))) {
-      should.exist(moduleName);
-      moduleName.should.be.a('string').and.not.match(/^\./);
+    for await (const moduleName of readdirScoped(path.join(here, '../node_modules'))) {
+      assert.ok(moduleName);
+      assert.equal(typeof moduleName, 'string');
+      assert.doesNotMatch(moduleName, /^\./);
 
       if (moduleName.startsWith('@')) {
-        moduleName.should.match(/^@[\w\-.]+\/[\w\-.]+$/);
+        assert.match(moduleName, /^@[\w\-.]+\/[\w\-.]+$/);
       } else {
-        moduleName.should.not.include('@').and.not.include('/');
+        assert.ok(!moduleName.includes('@') && !moduleName.includes('/'));
       }
     }
   });
