@@ -46,7 +46,7 @@
     "buffered-async-iterable": "^1.0.1",
     "pony-cause": "^2.1.10",
     "read-pkg": "^10.1.0",
-    "read-workspaces": "^1.2.0"
+    "read-workspaces": "^2.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",
