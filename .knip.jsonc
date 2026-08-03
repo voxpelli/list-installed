@@ -1,9 +1,7 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
   "ignore": ["test-published-types/index.js"],
-  "mocha": {
-    "entry": [
-      "**/test/*.{js,cjs,mjs}"
-    ]
-  }
+  "entry": [
+    "test/**/*.spec.js"
+  ]
 }
