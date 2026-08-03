@@ -1,5 +1,21 @@
 # Changelog
 
+## [7.0.0](https://github.com/voxpelli/list-installed/compare/v6.0.0...v7.0.0) (2026-08-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* Minimum supported Node.js version raised from `^20.19.0` to `^22.22.2 || ^24.15.0 || >=26.0.0`. The test suite now uses `node:test` instead of mocha; contributors running tests locally must use Node.js `>=22.22.2`.
+
+### 🧹 Chores
+
+* **deps:** update dependency typescript to v6 ([#118](https://github.com/voxpelli/list-installed/issues/118)) ([f6ee9e7](https://github.com/voxpelli/list-installed/commit/f6ee9e7ceee899de03246f16032d449becd6270c))
+* **deps:** update dev dependency ([dceae00](https://github.com/voxpelli/list-installed/commit/dceae001db0d879bed37eb395ee44f6376c7a8a7))
+* **deps:** update linting dependencies ([#115](https://github.com/voxpelli/list-installed/issues/115)) ([1de93fc](https://github.com/voxpelli/list-installed/commit/1de93fc60946154d7a3e4f794028f071a89c5838))
+* **deps:** update read-workspaces to 2.0.0 ([acc0989](https://github.com/voxpelli/list-installed/commit/acc0989fdc5df397165adf73fb2bb8b385f6b9a1))
+* **deps:** update type dependencies ([#114](https://github.com/voxpelli/list-installed/issues/114)) ([581a15b](https://github.com/voxpelli/list-installed/commit/581a15b5a0472c3c8eaf065702118cee1fcb09c4))
+* migrate from mocha/chai to node:test and require Node.js &gt;=22.22.2 ([#120](https://github.com/voxpelli/list-installed/issues/120)) ([bc0fc09](https://github.com/voxpelli/list-installed/commit/bc0fc09c9a6732c697898a88dbe054c4ac7e1f91))
+
 ## [6.0.0](https://github.com/voxpelli/list-installed/compare/v5.3.1...v6.0.0) (2026-02-23)
 
 
