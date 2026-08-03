@@ -16,3 +16,5 @@
 
 # Library specific ones
 /test-published-types/node_modules
+/.litho
+/litho.docs
