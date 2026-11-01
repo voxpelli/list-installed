@@ -49,7 +49,7 @@
     "read-workspaces": "^2.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22.20.1",
+    "@types/node": "^22.20.5",
     "@voxpelli/eslint-config": "^25.1.0",
     "@voxpelli/tsconfig": "^16.2.1",
     "c8": "^12.0.0",
@@ -58,7 +58,7 @@
     "installed-check": "^10.0.1",
     "knip": "^6.31.0",
     "npm-run-all2": "^9.0.3",
-    "type-coverage": "^2.30.1",
+    "type-coverage": "^2.31.1",
     "typescript": "~6.0.3",
     "validate-conventional-commit": "^2.0.0"
   }
